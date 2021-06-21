@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="en">
+  <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+    <meta charset="utf-8">
+
+<title>Ruby 2.7 新機能</title>
+
+<meta name="description" content="">
+<meta name="author" content="">
+<meta name="generator" content="reveal-ck 3.9.1">
+
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+<link rel="stylesheet" href="css/reveal.css">
+<link rel="stylesheet" href="css/theme/tmtms.css" id="theme">
+
+<!-- Code syntax highlighting -->
+<link rel="stylesheet" href="lib/css/zenburn.css">
+
+<link rel="stylesheet" href="css/reveal-ck.css">
+
+<link rel="stylesheet" href="css/rabbit.css">
+<link rel="stylesheet" href="css/theme/tmtms.css">
+
+<!-- Printing and PDF exports -->
+<script>
+  var link = document.createElement( 'link' );
+  link.rel = 'stylesheet';
+  link.type = 'text/css';
+  link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+  document.getElementsByTagName( 'head' )[0].appendChild( link );
+</script>
+
+<!--[if lt IE 9]>
+<script src="lib/js/html5shiv.js"></script>
+<![endif]-->
+
+  </head>
+
+  <body>
+    <div class="reveal">
+  <!-- Any section element inside of this container is displayed as a slide -->
+  <div class="slides">
+    <section>
+
+<h1>Ruby 2.7 新機能</h1>
+
+<p>とみたまさひろ</p>
+
+<p>2020-02-15</p>
+
+<p>Nagano.rb #5<br>
+#naganorb</p>
+
+</section>
+<section>
+
+<h2>自己紹介</h2>
+
+<p><img src="images/icon2.jpg" alt="" style="position:absolute;top:0%;right:0;width:180px;border:0px"></p>
+
+<ul>
+  <li>とみたまさひろ <a href="https://twitter.com/tmtms">@tmtms</a>
+</li>
+  <li><a href="https://tmtms.hatenablog.com">https://tmtms.hatenablog.com</a></li>
+  <li>富士通クラウドテクノロジーズ</li>
+  <li>Nagano.rb</li>
+  <li>Ginza.rb</li>
+  <li>日本MySQLユーザ会</li>
+  <li>MySQL Parameters
+    <ul>
+      <li><a href="https://mysql-params.tmtms.net/mysqld/?vers=5.0.96,5.1.72,5.5.62,5.6.47,5.7.29,8.0.19" style="font-size:70%">https://mysql-params.tmtms.net/</a></li>
+    </ul>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h2>Rubyとの関わり</h2>
+
+<ul>
+  <li>
+    <p>1997〜 当時は 1.1</p>
+  </li>
+  <li>
+    <p>〜2018/9 長野 Ruby で開発</p>
+  </li>
+  <li>
+    <p>2018/10〜 東京 not Ruby</p>
+  </li>
+  <li>
+    <p>最近ちょっとだけ Ruby</p>
+    <ul>
+      <li>某P言語で書かれたプログラムを RSpec でテスト</li>
+    </ul>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h3>Rubyは毎年12/25にリリース</h3>
+
+</section>
+<section>
+
+<h3>アドベントカレンダー</h3>
+
+<p><a href="https://ja.wikipedia.org/wiki/%E3%82%A2%E3%83%89%E3%83%99%E3%83%B3%E3%83%88%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC" style="font-size:70%">https://ja.wikipedia.org/wiki/アドベントカレンダー</a></p>
+
+<blockquote style="font-size:70%">
+  <p>アドベントカレンダー (Advent calendar) は、クリスマスまでの期間に日数を数えるために使用されるカレンダーである。待降節の期間（イエス・キリストの降誕を待ち望む期間）に窓を毎日ひとつずつ開けていくカレンダーである。すべての窓を開け終わるとクリスマスを迎えたことになる。</p>
+</blockquote>
+
+<blockquote style="font-size:70%">
+  <p>インターネット上などで、12月の1日から25日までに、特定のテーマに沿って毎日ブログなどに記事を投稿していくという企画がある。元々のアドベントカレンダーになぞらえて、この企画もアドベントカレンダーと呼ばれている。特にプログラミングに関連するアドベントカレンダーの企画が多数行われている。</p>
+</blockquote>
+
+</section>
+<section>
+
+<h2>Ruby 2.7 アドベントカレンダー</h2>
+
+<p><a href="https://qiita.com/advent-calendar/2019/ruby27">https://qiita.com/advent-calendar/2019/ruby27</a></p>
+
+</section>
+<section>
+
+<h2>Ruby 2.7 新機能など</h2>
+
+</section>
+<section>
+
+<h2>irb</h2>
+
+<p>対話型Ruby</p>
+
+<p>Ruby 2.7 で大幅に機能向上</p>
+
+</section>
+<section>
+
+<h3>リアルタイムのコードハイライト</h3>
+
+</section>
+<section>
+
+<h3>複数行編集</h3>
+
+</section>
+<section>
+
+<h3>メソッド補完</h3>
+
+</section>
+<section>
+
+<h3>マニュアル表示</h3>
+
+</section>
+<section>
+
+<h3>履歴保存</h3>
+
+</section>
+<section>
+
+<h3>しかし遅い</h3>
+
+<p>入力1文字毎に処理してるため</p>
+
+<p>きっとそのうち改善される</p>
+
+</section>
+<section>
+
+<h2>Numbered parameter</h2>
+
+</section>
+<section>
+
+<p>ブロック引数には名前をつける必要があった</p>
+
+<pre><code class="language-ruby">[5, 2, 4, 1, 3].sort { |a, b| a &lt;=&gt; b }  #=&gt; [1, 2, 3, 4, 5]
+</code></pre>
+
+</section>
+<section>
+
+<p>いちいち名前を考えなくてもいい場合<br>
+<code>_</code>+数字(1〜9) を使えるようになった</p>
+
+<pre><code class="language-ruby">[5, 2, 4, 1, 3].sort { _1 &lt;=&gt; _2 }  #=&gt; [1, 2, 3, 4, 5]
+</code></pre>
+
+</section>
+<section>
+
+<p><code>_1</code>, <code>_2</code>, … は今までローカル変数だったので<br>
+混在させると warning</p>
+
+<pre><code class="language-ruby">_2 = 99
+[5, 2, 4, 1, 3].sort { _1 &lt;=&gt; _2 }  #=&gt; [5, 2, 4, 1, 3]
+# warning: `_2' is reserved for numbered parameter;
+# consider another name
+</code></pre>
+
+</section>
+<section>
+
+<h2>パターンマッチング</h2>
+
+<p>他の言語にはあるらしい(しらない)</p>
+
+<p>ArrayやHashなどのオブジェクトの構造をマッチング</p>
+
+<p>(experimental)</p>
+
+</section>
+<section>
+
+<p>Array</p>
+
+<pre><code class="language-ruby">obj = [0, [1, 2, 3]]
+
+case obj
+in [a, [b, *c]]
+  p a #=&gt; 0
+  p b #=&gt; 1
+  p c #=&gt; [2, 3]
+end
+</code></pre>
+
+</section>
+<section>
+
+<p>Hash</p>
+
+<pre><code class="language-ruby">obj = {a: 0, b: 1, c: 2}
+
+case obj
+in {a: 0, x: 1}
+  # ここは通らない
+in {a: 0, b: var}
+  p var #=&gt; 1
+end
+</code></pre>
+
+</section>
+<section>
+
+<p>適合するパターンが無ければエラー</p>
+
+<pre><code class="language-ruby">obj = [1, "hoge"]
+
+case obj
+in {a: var}
+  # 適合しない
+in [a, b, c]
+  # 適合しない
+end
+#=&gt; [1, "hoge"] (NoMatchingPatternError)
+</code></pre>
+
+</section>
+<section>
+
+<p>elseも書ける</p>
+
+<pre><code class="language-ruby">obj = [1, "hoge"]
+
+case obj
+in {a: var}
+  # 適合しない
+in [a, b, c]
+  # 適合しない
+else
+  "no match"
+end
+#=&gt; "no match"
+</code></pre>
+
+</section>
+<section>
+
+<p>ifで条件指定も</p>
+
+<pre><code class="language-ruby">def hoge(obj)
+  case obj
+  in [a, b] if a == b.to_i
+    true
+  else
+    false
+  end
+end
+
+hoge [123, "123"]  #=&gt; true
+hoge [123, "456"]  #=&gt; false
+hoge "xxxx"        #=&gt; false
+</code></pre>
+
+</section>
+<section>
+
+<p>型(クラス)指定</p>
+
+<pre><code class="language-ruby">def hoge(obj)
+  case obj
+  in [String =&gt; s, Integer =&gt; n]
+    s * n
+  in [a, b]
+    a + b
+  end
+end
+
+hoge ["abc", 2]  #=&gt; "abcabc"
+hoge [3, 4]      #=&gt; 7
+</code></pre>
+
+</section>
+<section>
+
+<p>組み込みクラスだけじゃなくて<br>
+自分でもパターン定義可能らしい</p>
+
+<p>詳しくは RubyKaigi 2019 の発表を</p>
+
+<p>Pattern matching - New feature in Ruby 2.7<br>
+<a href="https://rubykaigi.org/2019/presentations/k_tsj.html">https://rubykaigi.org/2019/presentations/k_tsj.html</a></p>
+
+</section>
+<section>
+
+<h2>キーワード引数まわりのwarning</h2>
+
+</section>
+<section>
+
+<p>Rubyのキーワード引数はHashの表記を使用</p>
+
+</section>
+<section>
+
+<h3>Hash</h3>
+
+<pre><code class="language-ruby">{:hoge =&gt; 123, :fuga =&gt; 456}
+</code></pre>
+
+<p>キーがシンボルの場合 (Ruby 1.9〜)</p>
+
+<pre><code class="language-ruby">{hoge: 123, fuga: 456}
+</code></pre>
+
+</section>
+<section>
+
+<h3>引数</h3>
+
+<pre><code class="language-ruby">def foo(a, b, opts)
+  a    #=&gt; 1
+  b    #=&gt; 2
+  opts #=&gt; {hoge: 123, fuga: 456}
+end
+foo(1, 2, {hoge: 123, fuga: 456})
+</code></pre>
+
+<p>引数末尾のHashは <code>{</code> <code>}</code> を省略可</p>
+
+<pre><code class="language-ruby">def foo(a, b, opts)
+  a    #=&gt; 1
+  b    #=&gt; 2
+  opts #=&gt; {hoge: 123, fuga: 456}
+end
+foo(1, 2, hoge: 123, fuga: 456)
+</code></pre>
+
+<p>キーワード引数っぽい</p>
+
+</section>
+<section>
+
+<h3>キーワード引数</h3>
+
+<p>Ruby 2.0〜</p>
+
+<pre><code class="language-ruby">def foo(a, b, hoge: nil, fuga: nil)
+  a    #=&gt; 1
+  b    #=&gt; 2
+  hoge #=&gt; 123
+  fuga #=&gt; 456
+end
+foo(1, 2, hoge: 123, fuga: 456)
+</code></pre>
+
+</section>
+<section>
+
+<h3>その結果</h3>
+
+<pre><code class="language-ruby">def foo(hash={}, key: nil)
+end
+
+foo({a: 123})
+# `foo': unknown keyword: :a (ArgumentError)
+</code></pre>
+
+</section>
+<section>
+
+<h3>カオス</h3>
+
+<pre><code class="language-ruby">def foo(hash={}, key: nil)
+  hash  #=&gt; {"a"=&gt;123}
+  key   #=&gt; 456
+end
+
+h = {"a" =&gt; 123, :key =&gt; 456}
+foo(h)
+</code></pre>
+
+</section>
+<section>
+
+<p>Ruby 3 では Hash とキーワード引数を分離する予定</p>
+
+</section>
+<section>
+
+<p>そのために 2.7 で warning</p>
+
+<pre><code>def foo(hash={}, key: nil)
+end
+h = {:key =&gt; 456}
+foo(h)
+# warning: Using the last argument as keyword parameters is
+# deprecated; maybe ** should be added to the call
+</code></pre>
+
+<pre><code class="language-ruby">def foo(hash={}, key: nil)
+end
+h = {"a" =&gt; 123, :key =&gt; 456}
+foo(h)
+# warning: Splitting the last argument into positional
+# and keyword parameters is deprecated
+</code></pre>
+
+</section>
+<section>
+
+<h2>始端省略Rangeリテラル</h2>
+
+</section>
+<section>
+
+<p>範囲オブジェクトのリテラル表記</p>
+
+<pre><code class="language-ruby">r = (3..9)
+</code></pre>
+
+<p>2.6 から終端省略可能</p>
+
+<pre><code class="language-ruby">r = (3..)
+r.each { |i| p i } # 無限ループ
+</code></pre>
+
+</section>
+<section>
+
+<h3>2.7 から始端省略可能</h3>
+
+<pre><code class="language-ruby">r = (..9)
+
+# イテレータとしては使えない
+r.each { |i| p i } # can't iterate from NilClass
+
+# 両端省略は不可
+r = (..)  # syntax error, unexpected ')'
+</code></pre>
+
+</section>
+<section>
+
+<h3>DSL的な使用</h3>
+
+<pre><code class="language-ruby">require 'sequel'
+
+db = Sequel::Database.new
+
+db[:table].where(col: 3..9).sql
+#=&gt; SELECT * FROM table WHERE ((col &gt;= 3) AND (col &lt;= 9))
+db[:table].where(col: 3..).sql
+#=&gt; SELECT * FROM table WHERE (col &gt;= 3)
+db[:table].where(col: ..9).sql
+#=&gt; SELECT * FROM table WHERE (col &lt;= 9)
+</code></pre>
+
+</section>
+<section>
+
+<h2>コメント行を挟んだ</h2>
+<h2>メソッド呼び出し</h2>
+
+</section>
+<section>
+
+<p>メソッド呼び出しは <code>.</code> の前後で改行可能</p>
+
+<pre><code class="language-ruby">"hoge".upcase
+</code></pre>
+
+<pre><code class="language-ruby">"hoge".
+  upcase
+</code></pre>
+
+<pre><code class="language-ruby">"hoge"
+  .upcase
+</code></pre>
+
+</section>
+<section>
+
+<p><code>.</code> 終わりの行の後にコメント行を挟む</p>
+
+<pre><code class="language-ruby">"hoge".
+  # コメント
+  upcase
+</code></pre>
+
+<p>2.7からはこっちも可能</p>
+
+<pre><code class="language-ruby">"hoge"
+  # コメント
+  .upcase
+</code></pre>
+
+</section>
+<section>
+
+<h2>GC.compact</h2>
+
+<p>フラグメント化したメモリを再配置</p>
+
+<p>「GC」？</p>
+
+<p>長時間動き続けるプロセスで<br>
+肥大化したプロセスメモリを小さくできるかも</p>
+
+</section>
+<section>
+
+<h2>Date.jisx0301 の令和対応</h2>
+
+<pre><code class="language-ruby">require 'date'
+
+Date.today.jisx0301  #=&gt; "R02.02.15"
+</code></pre>
+
+</section>
+<section>
+
+<h2>以上</h2>
+
+<p style="font-size:80%">「プロと読み解くRuby 2.7 NEWS」<br>
+<a href="https://techlife.cookpad.com/entry/2019/12/25/121834">https://techlife.cookpad.com/entry/2019/12/25/121834</a></p>
+
+</section>
+<section>
+
+<h2>次の Ruby は 2020/12/25 予定</h2>
+
+<h2>2.8 じゃなくて 3 かも?</h2>
+
+</section>
+
+  </div>
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.js"></script>
+
+
+<script>
+  (function() {
+  function extend( a, b ) {
+    for(var i in b) {
+      a[i] = b[i];
+    }
+  }
+  var baseOptions = {
+    transition: 'default',
+
+    dependencies: [
+      { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+      { src: 'plugin/zoom-js/zoom.js', async: true },
+      { src: 'plugin/notes/notes.js', async: true }
+    ]
+  };
+
+  
+    baseOptions.dependencies.push({ src: 'plugin/rabbit/rabbit.js', async: true });
+  
+
+  var configOptions = {"controls":true,"postgress":true,"slideNumber":true,"history":true,"overview":true,"enter":true,"touch":false,"loop":false,"rtl":false,"fragments":true,"autoSlide":0,"autoSlideStoppable":false,"mouseWheel":false,"transition":"default","transitionSpeed":"fast","alloted_time":1800}
+  var initializeOptions = {};
+  extend(initializeOptions, baseOptions);
+  extend(initializeOptions, configOptions);
+  Reveal.initialize(initializeOptions);
+})();
+
+</script>
+
+  </body>
+</html>

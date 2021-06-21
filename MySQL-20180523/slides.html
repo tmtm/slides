@@ -1,0 +1,466 @@
+<section>
+
+<h1>MySQL 8</h1>
+
+<p>MySQL Innovation Day Tokyo</p>
+
+<p>2018/05/23</p>
+
+<p>とみたまさひろ</p>
+
+</section>
+<section>
+
+<h2>自己紹介</h2>
+
+<p><img src="images/icon2.jpg" alt="" style="float:right;width:200px;border:0px"></p>
+
+<ul>
+  <li>とみたまさひろ
+    <ul>
+      <li><a href="http://tmtms.hatenablog.com">http://tmtms.hatenablog.com</a></li>
+      <li><a href="http://twitter.com/tmtms">http://twitter.com/tmtms</a></li>
+    </ul>
+  </li>
+  <li>日本MySQLユーザ会</li>
+  <li>趣味
+    <ul>
+      <li>文字化け</li>
+      <li>MySQLプロトコル</li>
+    </ul>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h1>MySQL 8 🎉🎉🎉</h1>
+
+</section>
+<section>
+
+<p>MySQL 8</p>
+
+<p>多くの新機能がありますが…</p>
+
+</section>
+<section>
+
+<h3>MySQL恒例「RCとはいったい…」案件</h3>
+
+</section>
+<section>
+
+<h3>utf8の指定でwarning</h3>
+
+<pre><code class="language-text">mysql&gt; set names utf8;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+Warning (Code 3719): 'utf8' is currently an alias for the characte
+r set UTF8MB3, which will be replaced by UTF8MB4 in a future relea
+se. Please consider using UTF8MB4 in order to be unambiguous.
+</code></pre>
+
+</section>
+<section>
+
+<h3>mysqlshのプロンプトが派手に</h3>
+
+<p><img src="images/mysqlsh.png" alt="" style="width:70%"></p>
+
+</section>
+<section>
+
+<h2>MySQL Parameters</h2>
+
+<p><a href="https://tmtm.github.io/mysql-params" target="_blank">https://tmtm.github.io/mysql-params</a></p>
+
+<p>バージョン間のパラメータ値を比較</p>
+
+<p><a href="https://tmtm.github.io/mysql-params/?vers=5.7.22,8.0.11&amp;diff=true" target="_blank">5.7 と 8.0 の比較</a></p>
+
+</section>
+<section>
+
+<h2>文字コードまわり</h2>
+
+</section>
+<section>
+
+<h3>ujis,sjis,eucjpms,cp932 はもう要らない (個人の感想です)</h3>
+
+</section>
+<section>
+
+<h3>Default Charset</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>5.7</td>
+      <td>latin1</td>
+      <td>ISO8859-1 (欧米の文字)</td>
+    </tr>
+    <tr>
+      <td>8.0</td>
+      <td>utf8mb4</td>
+      <td>Unicode (世界中の文字)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>デフォルトのままで日本語や絵文字が使える</p>
+
+</section>
+<section>
+
+<h3>utf8mb4 Collations</h3>
+
+<p>文字の照合規則<br>
+日本語環境で使われそうなもの</p>
+
+<ul>
+  <li>utf8mb4_bin</li>
+  <li>utf8mb4_general_ci (5.7 デフォルト)</li>
+  <li>utf8mb4_unicode_ci</li>
+  <li>utf8mb4_unicode_520_ci</li>
+  <li>
+<strong>utf8mb4_0900_ai_ci</strong> (8.0 デフォルト)</li>
+  <li><strong>utf8mb4_0900_as_ci</strong></li>
+  <li><strong>utf8mb4_0900_as_cs</strong></li>
+  <li><strong>utf8mb4_ja_0900_as_cs</strong></li>
+  <li><strong>utf8mb4_ja_0900_as_cs_ks</strong></li>
+</ul>
+
+</section>
+<section>
+
+<h3>Collation name</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>bin</td>
+      <td>コードのまま</td>
+    </tr>
+    <tr>
+      <td>general</td>
+      <td>MySQL独自規則</td>
+    </tr>
+    <tr>
+      <td>unicode</td>
+      <td>Unicode 4.0.0</td>
+    </tr>
+    <tr>
+      <td>unicode_0520</td>
+      <td>Unicode 5.2.0</td>
+    </tr>
+    <tr>
+      <td><strong>0900</strong></td>
+      <td>Unicode 9.0.0</td>
+    </tr>
+    <tr>
+      <td><strong>ja_0900</strong></td>
+      <td>Unicode 9.0.0 + <strong>日本語</strong>
+</td>
+    </tr>
+  </tbody>
+</table>
+
+</section>
+<section>
+
+<h3>Collation name</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>ai</td>
+      <td>Accent Insensitive</td>
+    </tr>
+    <tr>
+      <td>as</td>
+      <td>Accent Sensitive</td>
+    </tr>
+    <tr>
+      <td>ci</td>
+      <td>Case Insensitive</td>
+    </tr>
+    <tr>
+      <td>cs</td>
+      <td>Case Sensitive</td>
+    </tr>
+    <tr>
+      <td>ks</td>
+      <td>Kana Sensitive</td>
+    </tr>
+  </tbody>
+</table>
+
+</section>
+<section>
+
+<h3>デフォルトCollationの違い</h3>
+
+<ul>
+  <li>5.7: utf8mb4_general_ci
+    <ul>
+      <li>
+<code>A</code>＝<code>a</code>, <code>Ａ</code>＝<code>ａ</code>, <code>や</code>≠<code>ゃ</code>
+</li>
+      <li>
+<code>は</code>≠<code>ぱ</code>≠<code>ば</code>
+</li>
+      <li>
+<code>あ</code>≠<code>ア</code>
+</li>
+      <li>
+<code>🍣</code>＝<code>🍺</code>
+</li>
+    </ul>
+  </li>
+  <li>8.0: utf8mb4_0900_ai_ci
+    <ul>
+      <li>
+<code>A</code>＝<code>a</code>, <code>Ａ</code>＝<code>ａ</code>, <strong><code>や</code>＝<code>ゃ</code></strong>
+</li>
+      <li><strong><code>は</code>＝<code>ぱ</code>＝<code>ば</code></strong></li>
+      <li><strong><code>あ</code>＝<code>ア</code></strong></li>
+      <li><strong><code>🍣</code>≠<code>🍺</code></strong></li>
+    </ul>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h3>Charset=utf8mb4 を指定しただけでは 5.7 と 8.0 で動きが異なるので注意</h3>
+
+</section>
+<section>
+
+<h3>新しいCollationたち</h3>
+
+</section>
+<section>
+
+<h3>utf8mb4_0900_ai_ci</h3>
+
+<ul>
+  <li>アクセントの違いを区別しない
+    <ul>
+      <li>
+<code>はは</code> ＝ <code>ぱぱ</code> ＝ <code>ばば</code>
+</li>
+    </ul>
+  </li>
+  <li>大文字小文字を区別しない
+    <ul>
+      <li>
+<code>びょういん</code> ＝ <code>びよういん</code>
+</li>
+      <li>
+<code>いろは</code> ＝ <code>イロハ</code>
+</li>
+      <li>
+<code>株式会社</code> ＝ <code>㍿</code>
+</li>
+    </ul>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h3>utf8mb4_0900_<strong>as</strong>_ci</h3>
+
+<ul>
+  <li>アクセントの違いを<strong>区別する</strong>
+    <ul>
+      <li>
+<code>はは</code> ≠ <code>ぱぱ</code> ≠ <code>ばば</code>
+</li>
+    </ul>
+  </li>
+  <li>大文字小文字を区別しない
+    <ul>
+      <li>
+<code>びょういん</code> ＝ <code>びよういん</code>
+</li>
+      <li>
+<code>いろは</code> ＝ <code>イロハ</code>
+</li>
+      <li>
+<code>株式会社</code> ＝ <code>㍿</code>
+</li>
+    </ul>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h3>utf8mb4_0900_as_<strong>cs</strong>
+</h3>
+
+<ul>
+  <li>アクセントの違いを区別する
+    <ul>
+      <li>
+<code>はは</code> ≠ <code>ぱぱ</code> ≠ <code>ばば</code>
+</li>
+    </ul>
+  </li>
+  <li>大文字小文字を<strong>区別する</strong>
+    <ul>
+      <li>
+<code>びょういん</code> ≠ <code>びよういん</code>
+</li>
+      <li>
+<code>いろは</code> ≠ <code>イロハ</code>
+</li>
+      <li>
+<code>株式会社</code> ≠ <code>㍿</code>
+</li>
+    </ul>
+  </li>
+</ul>
+
+<p>utf8mb4_bin と同じ?? (違います)</p>
+
+</section>
+<section>
+
+<h3>utf8mb4_<strong>ja</strong>_0900_as_cs</h3>
+
+<ul>
+  <li>アクセントの違いを区別する
+    <ul>
+      <li>
+<code>はは</code> ≠ <code>ぱぱ</code> ≠ <code>ばば</code>
+</li>
+    </ul>
+  </li>
+  <li>大文字小文字を区別する
+    <ul>
+      <li>
+<code>びょういん</code> ≠ <code>びよういん</code>
+</li>
+      <li>
+<code>株式会社</code> ≠ <code>㍿</code>
+</li>
+    </ul>
+  </li>
+  <li>カタカナひらがなを<strong>区別しない</strong>
+    <ul>
+      <li>
+<code>いろは</code> ＝ <code>イロハ</code>
+</li>
+    </ul>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h3>utf8mb4_ja_0900_as_cs_<strong>ks</strong>
+</h3>
+
+<ul>
+  <li>アクセントの違いを区別する
+    <ul>
+      <li>
+<code>はは</code> ≠ <code>ぱぱ</code> ≠ <code>ばば</code>
+</li>
+    </ul>
+  </li>
+  <li>大文字小文字を区別する
+    <ul>
+      <li>
+<code>びょういん</code> ≠ <code>びよういん</code>
+</li>
+      <li>
+<code>株式会社</code> ≠ <code>㍿</code>
+</li>
+    </ul>
+  </li>
+  <li>カタカナひらがなを<strong>区別する</strong>
+    <ul>
+      <li>
+<code>いろは</code> ≠ <code>イロハ</code>
+</li>
+    </ul>
+  </li>
+</ul>
+
+<p>utf8mb4_0900_as_cs と同じ??</p>
+
+</section>
+<section>
+
+<h3>utf8mb4_0900 と utf8mb4_<strong>ja</strong>_0900 の違い</h3>
+
+</section>
+<section>
+
+<h3>ソート順</h3>
+
+<pre><code class="language-text">mysql&gt; select hex(s),s from ja order by s;
++--------+------+
+| hex(s) | s    |
++--------+------+
+| E4BA9C | 亜   |
+| E4BC8A | 伊   |
+| E99BA8 | 雨   |
+| E6A084 | 栄   |
+| E5A5A5 | 奥   |
++--------+------+
+</code></pre>
+
+</section>
+<section>
+
+<h3>長音</h3>
+
+<pre style="font-size: 60%"><code class="language-text">mysql&gt; select s from ja order by s;
++--------+
+| s      |
++--------+
+| あー   |
+| ああ   |
+| あい   |
+| いあ   |
+| いー   |
+| いい   |
+| うあ   |
+| うい   |
+| うー   |
++--------+
+</code></pre>
+
+</section>
+<section>
+
+<h3>ja_0900 は JIS順</h3>
+
+<h3>日本語辞書順</h3>
+
+</section>
+<section>
+
+<h3>utf8mb4_0900_as_csが一番無難？</h3>
+
+<h3>utf8mb4_binでもいいかも</h3>
+
+</section>
+<section>
+
+<h2>まとめ</h2>
+
+<ul>
+  <li>Charsetのデフォルトがutf8mb4で便利！</li>
+  <li>日本語Collationが増えた！</li>
+  <li>適切なCollationを使おう！</li>
+</ul>
+
+</section>

@@ -1,0 +1,159 @@
+<section>
+
+<h1>ながのRubyの会</h1>
+
+<p>2017/12/02</p>
+
+<p>とみたまさひろ</p>
+
+</section>
+<section>
+
+<h2>長野にはRubyコミュニティがない</h2>
+
+</section>
+<section>
+
+<h2>最近Python勢がつよい</h2>
+
+</section>
+<section>
+
+<h2>「ギークラ某ながの」とか</h2>
+
+</section>
+<section>
+
+<h2>ないなら作るか</h2>
+
+</section>
+<section>
+
+<h2>とりあえず名前をつければ</h2>
+<h2>なんとかなるのではないか</h2>
+
+</section>
+<section>
+
+<h2>というわけで第1回</h2>
+
+</section>
+<section>
+
+<h2>今後の展開</h2>
+
+</section>
+<section>
+
+<h2>何も考えてません！</h2>
+
+</section>
+<section>
+
+<p>長野で技術コミュニティを立ち上げると長野からいなくなるという謎の噂も…</p>
+
+</section>
+<section>
+
+<h1>Ruby</h1>
+
+</section>
+<section>
+
+<p>1993年〜</p>
+
+<p>Ruby on Rails で爆発的に普及</p>
+
+</section>
+<section>
+
+<h2>スクリプト言語</h2>
+<h2>オブジェクト指向</h2>
+<h2>動的</h2>
+
+</section>
+<section>
+
+<h2>スクリプト言語</h2>
+
+<ul>
+  <li>
+    <p>コンパイルしなくても動く</p>
+  </li>
+  <li>
+    <p>実行時に内部で自動的にコンパイル</p>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h2>オブジェクト指向</h2>
+
+<ul>
+  <li>
+    <p>ほぼすべてがオブジェクト</p>
+  </li>
+  <li>
+    <p>整数, 文字列, true, nil</p>
+  </li>
+</ul>
+
+<pre><code class="language-ruby">123.class   #=&gt; Integer
+nil.class   #=&gt; NilClass
+</code></pre>
+
+</section>
+<section>
+
+<h2>動的</h2>
+
+<ul>
+  <li>動的型付け
+    <ul>
+      <li>変数</li>
+      <li>メソッドの引数, 戻り値</li>
+    </ul>
+  </li>
+  <li>実行時に振る舞いを変更
+    <ul>
+      <li>既存のクラスを変更</li>
+      <li>既存のメソッドを上書き</li>
+    </ul>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h2>便利</h2>
+
+<p>整数の上限がない</p>
+
+<pre><code class="language-ruby">12**345
+#=&gt; 2077446682327378559843444695582704973572786912705232236931705903179519704325276892191015329301807037794598378537132233994613616420526484930777273718077112370160566492728059713895917217042738578562985773221381211423961068296308572143393854703167926779929682604844469621152130457090778409728703018428147734622401526422774317612081074841839507864189781700150115308454681772032
+</code></pre>
+
+</section>
+<section>
+
+<h2>便利</h2>
+
+<p>サーバープログラム</p>
+
+<pre><code class="language-ruby">require 'socket'
+
+Socket.tcp_server_loop(12345) do |socket|
+  Thread.new(socket) do |s|
+    s.write("hoge")
+    ...
+  end
+end
+</code></pre>
+
+</section>
+<section>
+
+<h1>以上</h1>
+
+</section>

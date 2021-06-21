@@ -1,0 +1,314 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>MIMEヘッダエンコーディングは複雑すぎてつらい</title>
+
+<meta name="description" content="">
+<meta name="author" content="">
+<meta name="generator" content="reveal-ck 4.0.0">
+
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+
+<!-- Code syntax highlighting -->
+<link rel="stylesheet" href="css/reset.css">
+<link rel="stylesheet" href="css/reveal.css">
+<link rel="stylesheet" href="css/theme/tmtms.css" id="theme">
+
+<!-- Theme used for syntax highlighting of code -->
+<link rel="stylesheet" href="lib/css/monokai.css">
+
+<link rel="stylesheet" href="css/reveal-ck.css">
+
+<link rel="stylesheet" href="css/rabbit.css">
+<link rel="stylesheet" href="css/theme/tmtms.css">
+
+<!-- Printing and PDF exports -->
+<script>
+  var link = document.createElement( 'link' );
+  link.rel = 'stylesheet';
+  link.type = 'text/css';
+  link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+  document.getElementsByTagName( 'head' )[0].appendChild( link );
+</script>
+
+  </head>
+
+  <body>
+    <div class="reveal">
+  <div class="slides">
+    <section>
+
+<h2>MIMEヘッダエンコーディングは複雑すぎてつらい</h2>
+
+<p>2021-06-22</p>
+
+<p>とみたまさひろ</p>
+
+</section>
+<section>
+
+<p>別にしらなくてもいい<br>
+役に立つか立たないかわからない<br>
+技術について語るコーナー</p>
+
+</section>
+<section>
+
+<h2>MIMEヘッダエンコーディング</h2>
+
+<p>メールのヘッダでよく見る<br>
+<code>=?ISO-2022-JP?B?GyRCRnxLXDhsGyhC?=</code><br>
+みたいなやつ</p>
+
+</section>
+<section>
+
+<h2>RFC 2047</h2>
+
+<p>Message Header Extensions for Non-ASCII Text<br>
+<a href="https://tools.ietf.org/html/rfc2047">https://tools.ietf.org/html/rfc2047</a></p>
+
+<p>メールのヘッダは ASCII のみ<br>
+ASCII以外の文字列をヘッダに書けるようにするために作られた規格</p>
+
+</section>
+<section>
+
+<p>Bエンコーディング:</p>
+<pre><code>=?[文字コード]?B?[Base64化されたデータ]?=
+</code></pre>
+
+<p>Qエンコーディング:</p>
+<pre><code>=?[文字コード]?Q?[そのまま書けない文字を=XXに変換したデータ]?=
+</code></pre>
+
+<p>「日本語ABC」を変換すると:</p>
+<pre><code class="language-text">=?ISO-2022-JP?B?GyRCRnxLXDhsGyhCQUJD?=
+=?ISO-2022-JP?Q?=1B$BF|K\8l=1B(BABC?=
+=?UTF-8?B?5pel5pys6KqeQUJD?=
+=?UTF-8?Q?=E6=97=A5=E6=9C=AC=E8=AA=9EABC?=
+</code></pre>
+
+</section>
+<section>
+
+<h2>エンコードのつらみ</h2>
+
+</section>
+<section>
+
+<p>Bエンコーディングは基本的には文字列をBase64化して前後に文字列をつけるだけ</p>
+
+<p><code>日本語</code> → <code>5pel5pys6Kqe</code> → <code>=?UTF-8?B?5pel5pys6Kqe?=</code></p>
+
+<p>つらくない</p>
+
+</section>
+<section>
+
+<pre style="font-size: 80%"><code class="language-text">Subject: MIMEヘッダエンコーディングは複雑すぎてつらい
+</code></pre>
+
+<p>↓</p>
+
+<pre style="font-size: 40%"><code class="language-text">Subject: =?UTF-8?B?TUlNReODmOODg+ODgOOCqOODs+OCs+ODvOODh+OCo+ODs+OCsOOBr+ikh+mbkeOBmeOBjuOBpuOBpOOCieOBhA==?=
+</code></pre>
+
+<p>長い…</p>
+
+</section>
+<section>
+
+<p>メールのヘッダだから折り返しちゃえ！</p>
+
+<pre style="font-size: 55%"><code>Subject: =?UTF-8?B?TUlNReODmOODg+ODgOOCqOODs+OCs+ODvOODh+OCo+ODs+OCsOOBr+ik
+ h+mbkeOBmeOBjuOBpuOBpOOCieOBhA==?=
+</code></pre>
+
+<p><strong>ダメ</strong></p>
+
+<p>折り返せるのは空白文字の箇所だけ</p>
+
+</section>
+<section>
+
+<p>複数のエンコーディング文字列に分割する</p>
+
+<pre style="font-size: 55%"><code>Subject: =?UTF-8?B?TUlNReODmOODg+ODgOOCqOODs+OCs+ODvOODh+OCo+ODs+OCsOOBr+ik?=
+ =?UTF-8?B?h+mbkeOBmeOBjuOBpuOBpOOCieOBhA==?=
+</code></pre>
+
+<p>エンコーディング文字列間の空白は取り除かれる仕様<br>
+だからよさそう</p>
+
+<p>でも実はこれでも<strong>ダメ</strong></p>
+
+</section>
+<section>
+
+<p>文字を分割しちゃダメ</p>
+
+<pre style="font-size: 60%"><code class="language-html">=?UTF-8?B?TUlNReODmOODg+ODgOOCqOODs+OCs+ODvOODh+OCo+ODs+OCsOOBr+ik?=
+→ MIMEヘッダエンコーディングは&lt;E8&gt;&lt;A4&gt;
+
+=?UTF-8?B?h+mbkeOBmeOBjuOBpuOBpOOCieOBhA==?=
+→ &lt;87&gt;雑すぎてつらい
+</code></pre>
+
+<p>「複」(E8 A4 87) が分割されてしまっている</p>
+
+</section>
+<section>
+
+<p>文字単位で処理しないといけない</p>
+
+<pre style="font-size: 60%"><code>=?UTF-8?B?TUlNReODmOODg+ODgOOCqOODs+OCs+ODvOODh+OCo+ODs+OCsOOBr+==?=
+→ MIMEヘッダエンコーディングは
+
+=?UTF-8?B?6KSH6ZuR44GZ44GO44Gm44Gk44KJ44GE?=
+→ 複雑すぎてつらい
+</code></pre>
+
+</section>
+<section>
+
+<p>さらに<br>
+ISO-2022-JP のような状態を持つ文字コードの場合は ASCII で終了しないといけない</p>
+
+<pre><code class="language-html">日本語ABCあいう
+
+→ &lt;ESC&gt;$BF|K\8l&lt;ESC&gt;(BABC&lt;ESC&gt;$B$"$$$&amp;&lt;ESC&gt;(B
+</code></pre>
+
+<p><code>&lt;ESC&gt;$B</code> : JIS X 0218</p>
+
+<p><code>&lt;ESC&gt;(B</code> : US-ASCII　</p>
+
+</section>
+<section>
+
+<p>これは OK</p>
+
+<pre><code class="language-html">&lt;ESC&gt;$BF|K\8l&lt;ESC&gt;(BABC⏎    日本語ABC
+&lt;ESC&gt;$B$"$$$&amp;&lt;ESC&gt;(B        あいう
+</code></pre>
+
+</section>
+<section>
+
+<p>これはNG</p>
+
+<pre><code class="language-html">&lt;ESC&gt;$BF|K\8l&lt;ESC&gt;(BABC&lt;ESC&gt;$B$"⏎  日本語ABCあ
+$$$&amp;&lt;ESC&gt;(B                        いう
+</code></pre>
+
+</section>
+<section>
+
+<p>やるならエンコーディング文字列の最後にASCIIに戻す</p>
+
+<pre><code class="language-html">&lt;ESC&gt;$BF|K\8l&lt;ESC&gt;(BABC&lt;ESC&gt;$B$"&lt;ESC&gt;(B⏎  日本語ABCあ
+&lt;ESC&gt;$B$$$&amp;&lt;ESC&gt;(B                        いう
+</code></pre>
+
+</section>
+<section>
+
+<h2>デコードのつらみ</h2>
+
+</section>
+<section>
+
+<p>文字が分割されている</p>
+
+<pre><code class="language-html">=?UTF-8?B?44GC44GE44GG44GI44E=?=⏎       あいうえ&lt;E3&gt;&lt;81&gt;
+=?UTF-8?B?iuOBi+OBjeOBj+OBkeOBkw==?=    &lt;8A&gt;かきくけこ
+↓
+あいうえ???かきくけこ
+</code></pre>
+
+</section>
+<section>
+
+<p>エンコーディング文字列がつながってる</p>
+
+<pre><code>=?UTF-8?B?44GC44GE44GG44GI44GK?==?UTF-8?B?44GL44GN44GP44GR44GT?=
+</code></pre>
+
+</section>
+<section>
+
+<p>「<code>"</code>」で括られている</p>
+
+<pre><code class="language-text">"=?UTF-8?B?44GC44GE44GG44GI44GK?="
+</code></pre>
+
+<p>本当はデコードしちゃダメ</p>
+
+</section>
+<section>
+
+<p>ISO-2022-JP と書かれてるのに<br>
+ISO-2022-JP に無い文字が含まれている</p>
+
+<p>「ｱ」「①」「Ⅲ」「㍻」「髙」など</p>
+
+<p>本当はダメなんだけど普通に使われてる</p>
+
+<p>ISO-2022-JP じゃなくて CP50221 として扱う</p>
+
+</section>
+<section>
+
+<h1>つらい 😇</h1>
+
+</section>
+
+  </div>
+</div>
+
+<script src="js/reveal.js"></script>
+
+
+<script>
+  (function() {
+  function extend( a, b ) {
+    for(var i in b) {
+      a[i] = b[i];
+    }
+  }
+  var baseOptions = {
+    transition: 'default',
+    hash: true,
+    dependencies: [
+      { src: 'plugin/markdown/marked.js' },
+      { src: 'plugin/markdown/markdown.js' },
+      { src: 'plugin/highlight/highlight.js' },
+      { src: 'plugin/notes/notes.js', async: true }
+    ]
+  };
+
+  
+    baseOptions.dependencies.push({ src: 'plugin/rabbit/rabbit.js', async: true });
+  
+
+  var configOptions = {"controls":true,"postgress":true,"slideNumber":true,"history":true,"overview":true,"enter":true,"touch":false,"loop":false,"rtl":false,"fragments":true,"autoSlide":0,"autoSlideStoppable":false,"mouseWheel":false,"transition":"default","transitionSpeed":"fast","alloted_time":300}
+  var initializeOptions = {};
+  extend(initializeOptions, baseOptions);
+  extend(initializeOptions, configOptions);
+  Reveal.initialize(initializeOptions);
+})();
+
+</script>
+
+  </body>
+</html>

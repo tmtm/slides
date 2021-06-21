@@ -1,0 +1,555 @@
+<section>
+
+<h2>自己紹介</h2>
+
+<ul>
+  <li>とみたまさひろ</li>
+  <li>得意技
+    <ul>
+      <li>Ruby</li>
+      <li>MySQL</li>
+      <li>文字化け</li>
+    </ul>
+  </li>
+  <li><a href="https://twitter.com/tmtms/status/546925668424896512">🍣🍺問題</a></li>
+  <li>好きなO/Rマッパーは Sequel</li>
+</ul>
+
+</section>
+<section>
+
+<h2>SQLの嫌いなところ</h2>
+
+<ul>
+  <li>英語っぽい</li>
+  <li>コンピュータで扱う言語っぽくない</li>
+  <li>予約語が多い</li>
+  <li>カラム名に「group」が使えなくて死ぬ</li>
+  <li>余計な単語</li>
+  <li>INSERT <strong>INTO</strong>, GROUP <strong>BY</strong>
+</li>
+</ul>
+
+</section>
+<section>
+
+<h3>英語だからみんな騙されてるけど</h3>
+<h3>日本語だったら「ぴゅう太」</h3>
+<h3>みたいなもんだからな</h3>
+
+</section>
+<section>
+
+<h1>お前の罪を数えろ</h1>
+
+<p>NSEG #96 (お、丸8年では?)</p>
+
+<p>2018/01/27</p>
+
+<p>とみたまさひろ</p>
+
+</section>
+<section>
+
+<h2>SQLアンチパターンを読んだ感想</h2>
+
+</section>
+<section>
+
+<h2>「あー、あるある」</h2>
+
+</section>
+<section>
+
+<h2>数えてみよう</h2>
+
+</section>
+<section>
+
+<h2>ジェイウォーク</h2>
+
+<p>1カラムに複数の値を格納する</p>
+
+</section>
+<section>
+
+<p>やったやった</p>
+
+<p>「a,b,c」とするのはシロウト</p>
+
+<p>「,a,b,c,」としておくと<br>
+<code>LIKE '%,値,%'</code> で検索できて便利</p>
+
+</section>
+<section>
+
+<h2>ナイーブツリー</h2>
+
+<p>子が親IDを参照するツリー構造</p>
+
+</section>
+<section>
+
+<p>ふつーにやる</p>
+
+<p>そもそもツリー構造をRDBで表現するのが負け</p>
+
+<p>同じ負けなら単純な方がいい</p>
+
+<p>そういえばMySQLも8から再帰クエリ書けますね</p>
+
+<p>Nested Set はやりすぎ感</p>
+
+<p><a href="http://tmtms.hatenablog.com/entry/20110223/redmine">http://tmtms.hatenablog.com/entry/20110223/redmine</a></p>
+
+</section>
+<section>
+
+<h2>IDリクワイド</h2>
+
+<p>すべてのテーブルに「id」列を用いる</p>
+
+</section>
+<section>
+
+<p>よくやった</p>
+
+<p>userテーブルのidカラムは user.id と書けていい感じ</p>
+
+<p>user.user_id はなんか冗長</p>
+
+<p>全体でカラム名を一意にした方がいいような気もする</p>
+
+</section>
+<section>
+
+<h2>キーレスエントリ</h2>
+
+<p>外部キー制約を使用しない</p>
+
+</section>
+<section>
+
+<p>え？ MySQLをdisってんの？</p>
+
+<p>初期のMySQLには外部キーなんてなかったんですよ</p>
+
+<p>消す時に順番に気をつけないとエラーになるし</p>
+
+<p>PostgreSQL だと何か方法あった気もする</p>
+
+</section>
+<section>
+
+<h2>エンティティ・アトリビュート・バリュー</h2>
+
+<h3>汎用的な属性テーブルを使用する</h3>
+
+<p>名前カラムと値カラムみたいなやつ</p>
+
+</section>
+<section>
+
+<p>ごめんなさい</p>
+
+<p>値の型ごとにテーブルを用意する<br>
+くらいはしてもよかった</p>
+
+<p>実はJSONでもいいかも</p>
+
+</section>
+<section>
+
+<h2>ポリモーフィック関連</h2>
+
+<h3>二重目的の外部キーを使用する</h3>
+
+</section>
+<section>
+
+<p>たぶんやってない…と思う</p>
+
+</section>
+<section>
+
+<h2>マルチカラムアトリビュート</h2>
+
+<h3>複数の列を定義する</h3>
+
+<p>tag1, tag2, tag3 カラムみたいなやつ</p>
+
+</section>
+<section>
+
+<p>たぶんやってない…と思う</p>
+
+</section>
+<section>
+
+<h2>メタデータトリブル</h2>
+
+<h3>テーブルや列をコピーする</h3>
+
+<p>行数の多いテーブルを分割するとか</p>
+
+</section>
+<section>
+
+<p>諸般の事情によりやってました</p>
+
+<p>つらい</p>
+
+</section>
+<section>
+
+<h2>ラウンディングエラー</h2>
+
+<h3>FLOATデータ型を使用する</h3>
+
+</section>
+<section>
+
+<p>残念ながら使う機会がなかった</p>
+
+</section>
+<section>
+
+<h2>サーティワンフレーバー</h2>
+
+<h3>限定する値を列定義で指定する</h3>
+
+<p>MySQLでENUM使ったり<br>
+CHECK制約で値のリストを指定したり</p>
+
+</section>
+<section>
+
+<p>使ったことはある</p>
+
+<p>そんなに悪くなかったような…</p>
+
+</section>
+<section>
+
+<h2>ファントムファイル</h2>
+
+<h3>大きなデータをファイルで管理</h3>
+
+</section>
+<section>
+
+<p>やってる</p>
+
+<p>ふつうやりますよね？</p>
+
+<p>まあつらいこともあるけど</p>
+
+</section>
+<section>
+
+<h2>インデックスショットガン</h2>
+
+<h3>闇雲にインデックスを使用する</h3>
+
+</section>
+<section>
+
+<p>たぶんやってない</p>
+
+</section>
+<section>
+
+<h2>フィア・オブ・ジ・アンノウン</h2>
+
+<h3>col=NULL とか func(NULL) とか</h3>
+
+</section>
+<section>
+
+<p>ふつうはやらない</p>
+
+</section>
+<section>
+
+<h2>アンビギュアスグループ</h2>
+
+<h3>非グループ化列を参照する</h3>
+
+<p><code>SELECT col1 ... GROUP BY col2</code> とか</p>
+
+</section>
+<section>
+
+<p>やってた</p>
+
+<p>たぶんMySQL以外はエラーになる</p>
+
+<p>意外と便利</p>
+
+<p><a href="https://twitter.com/tmtms/status/846254316797095936">https://twitter.com/tmtms/status/846254316797095936</a></p>
+
+</section>
+<section>
+
+<h2>ランダムセレクション</h2>
+
+<h3>データをランダムにソートする</h3>
+
+</section>
+<section>
+
+<p>自分はやらないけどそういう要求があった場合はむずかしいですね</p>
+
+</section>
+<section>
+
+<h2>プアマンス・サーチエンジン</h2>
+
+<h3>
+<code>LIKE '%文字列%'</code> で全文検索</h3>
+
+</section>
+<section>
+
+<p>やるやる</p>
+
+<p>お手軽なのでおすすめ 😇</p>
+
+<p>PostgreSQLは何かの仕組みで <code>LIKE '%文字列%'</code> でも<br>
+インデックスを効かせることができたような</p>
+
+</section>
+<section>
+
+<h2>スパゲティクエリ</h2>
+
+<h3>複雑で長いクエリ</h3>
+
+</section>
+<section>
+
+<p>SQL力が低くて複雑なクエリは書けません</p>
+
+</section>
+<section>
+
+<h2>インプリシットカラム</h2>
+
+<h3><code>SELECT *</code></h3>
+
+</section>
+<section>
+
+<p>プログラム中ではふつうは書かない</p>
+
+<p>手作業では使う</p>
+
+</section>
+<section>
+
+<h2>リーダブルパスワード</h2>
+
+<h3>パスワードを平文で格納する</h3>
+
+</section>
+<section>
+
+<p>昔やりました ごめんなさい</p>
+
+<p>今は平文で格納することはないけど<br>
+ハッシュ値じゃなくて復号可能な暗号にすることもある</p>
+
+</section>
+<section>
+
+<h2>SQLインジェクション</h2>
+
+<h3>未検証の入力をコードとして実行する</h3>
+
+</section>
+<section>
+
+<p>O/Rマッパー使いましょう</p>
+
+</section>
+<section>
+
+<h2>シュードキー・ニートフリーク</h2>
+
+<h3>隙間を埋める</h3>
+
+<p>偉い順にIPアドレスを振るみたいな？</p>
+
+</section>
+<section>
+
+<p>人目に触れるものをキーとしては<br>
+つかわない方がいいですね</p>
+
+</section>
+<section>
+
+<h2>シー・ノー・エビル</h2>
+
+<h3>肝心な部分を見逃す</h3>
+
+<p>例外機構がない言語でエラーチェックしてない</p>
+
+</section>
+<section>
+
+<p>そんな人いる？</p>
+
+<p>例外を隠蔽するプログラムは見たことある</p>
+
+</section>
+<section>
+
+<h2>ディプロマティック</h2>
+<h2>イミュニティ</h2>
+
+<h3>SQLを特別扱いする</h3>
+
+<p>プログラムを管理するようにはSQLを管理してない</p>
+
+</section>
+<section>
+
+<p>文書化はしてない</p>
+
+<p>ER図は必要になった時にツールで生成すればよくね？</p>
+
+<p>Railsのマイグレーションの仕組みはすばらしい</p>
+
+</section>
+<section>
+
+<h2>マジックビーンズ</h2>
+
+<h3>モデルがアクティブレコードそのもの</h3>
+
+</section>
+<section>
+
+<p>あるある</p>
+
+</section>
+<section>
+
+<h2>砂の城</h2>
+
+<h3>想定不足</h3>
+
+<p>サービス継続・運用の話</p>
+
+</section>
+<section>
+
+<p>運用してないからパス</p>
+
+</section>
+<section>
+
+<h2>結果</h2>
+
+</section>
+<section>
+
+<h1>13 / 25</h1>
+
+</section>
+<section>
+
+<h1>過半数 😇</h1>
+
+</section>
+<section>
+
+<h1>おまけ</h1>
+
+</section>
+<section>
+
+<h2>アンチパターンを考えてみた</h2>
+
+</section>
+<section>
+
+<h2>ソーリー</h2>
+<h2>ジャパニーズ・オンリー</h2>
+
+</section>
+<section>
+
+<h2>日本語テーブル名/カラム名</h2>
+
+</section>
+<section>
+
+<table>
+  <thead>
+    <tr>
+      <th>英語</th>
+      <th>日本語</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>created_at</td>
+      <td>作成日時</td>
+    </tr>
+    <tr>
+      <td>user_name</td>
+      <td>利用者名</td>
+    </tr>
+  </tbody>
+</table>
+
+</section>
+<section>
+
+<h2>あれ？わかりやすい</h2>
+
+</section>
+<section>
+
+<h2>文字数も少なくてすむし</h2>
+
+</section>
+<section>
+
+<h2>入力は面倒だがエディタやIDEがきっとなんとかしてくれる</h2>
+
+</section>
+<section>
+
+<h2>情報処理推進機構(IPA)も推奨(？)</h2>
+
+<p>情報処理試験データベースで日本語テーブル名と日本語カラム名のクエリを手で書かされた記憶が…</p>
+
+<pre><code class="language-sql">SELECT 顧客名, 会社名 FROM 顧客管理台帳
+  LFET JOIN 会社管理台帳 USING 会社識別番号
+  WHERE 顧客住所 ...
+</code></pre>
+
+</section>
+<section>
+
+<h2>業務用語をそのまま使える</h2>
+
+</section>
+<section>
+
+<h2>アンチパターン…？ 🤔</h2>
+
+</section>
+<section>
+
+<h2>実は結構よいのでは</h2>
+
+</section>
+<section>
+
+<h1>おわり</h1>
+
+</section>

@@ -1,0 +1,583 @@
+<section>
+
+<h2>端末とシグナル</h2>
+
+<p>とみたまさひろ</p>
+
+</section>
+<section>
+
+<p>新しい技術にはついていけないので<br>
+古いけど今でも役に立ちそうな立たなそうな<br>
+技術について語るコーナー</p>
+
+</section>
+<section>
+
+<h2>端末とシグナル</h2>
+
+</section>
+<section>
+
+<p>Q. Ctrl-C を押すとプログラムが止まるのは何故？</p>
+
+</section>
+<section>
+
+<p>A. SIGINT シグナルがプログラムに送られるから</p>
+
+</section>
+<section>
+
+<p>Q. シグナルを発行してるのは誰？</p>
+
+</section>
+<section>
+
+<p>A. カーネル(端末ドライバ)</p>
+
+</section>
+<section>
+
+<h2>端末</h2>
+
+</section>
+<section>
+
+<h3>端末?</h3>
+
+<ul>
+  <li>RLogin</li>
+  <li>Tera Term</li>
+  <li>PuTTY</li>
+  <li>xterm</li>
+</ul>
+
+<p>これらは「端末エミュレータ」</p>
+
+<p>「物理的な端末」のエミュレータ</p>
+
+</section>
+<section>
+
+<h3>端末(物理)</h3>
+
+<p style="font-size:small"><img src="images/vt100.jpg" alt="" style="width:60%"><br>
+<a href="https://ja.wikipedia.org/wiki/VT100">https://ja.wikipedia.org/wiki/VT100</a></p>
+
+</section>
+<section>
+
+<h3>VT100(物理)</h3>
+
+<p><img src="images/vt100.jpg" alt="" style="position:absolute;top:0;right:0;width:30%"></p>
+
+<ul>
+  <li>1978年</li>
+  <li>80桁 x 24行</li>
+  <li>高機能</li>
+  <li>かなり人気だったらしい</li>
+  <li>デファクトスタンダード</li>
+  <li>たいていの端末エミュレータでサポート</li>
+</ul>
+
+</section>
+<section>
+
+<p>昔はシリアルポートに端末をつないでいた</p>
+
+<p style="font-size:small"><img src="images/rs232c.jpg" alt="" style="width:50%"><br>
+<a href="https://ja.wikipedia.org/wiki/RS-232">https://ja.wikipedia.org/wiki/RS-232</a></p>
+
+<p>RS-232C</p>
+
+</section>
+<section>
+
+<h3>RS-232C</h3>
+
+<ul>
+  <li>7bit / 8bit のデータの送受信</li>
+  <li>アナログ通信</li>
+  <li>双方で通信速度を合わせる必要がある</li>
+  <li>エラー訂正などもない</li>
+  <li>パリティビットによるエラー検出は可能</li>
+</ul>
+
+</section>
+<section>
+
+<p>端末で「A」キーを押すと<br>
+0x41 データがホストに送信される</p>
+
+<p>ホストが 0x41 データを送信すると<br>
+端末に「A」が表示される</p>
+
+</section>
+<section>
+
+<h3>端末で送受信するデータは基本的に文字</h3>
+
+<table style="font-size:45%">
+  <thead>
+    <tr>
+      <th> </th>
+      <th>0</th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>4</th>
+      <th>5</th>
+      <th>6</th>
+      <th>7</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>NUL</td>
+      <td>DLE</td>
+      <td>SP</td>
+      <td>0</td>
+      <td>@</td>
+      <td>P</td>
+      <td>`</td>
+      <td>p</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>SOH</td>
+      <td>DC1</td>
+      <td>!</td>
+      <td>1</td>
+      <td>A</td>
+      <td>Q</td>
+      <td>a</td>
+      <td>q</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>STX</td>
+      <td>DC2</td>
+      <td>”</td>
+      <td>2</td>
+      <td>B</td>
+      <td>R</td>
+      <td>b</td>
+      <td>r</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>ETX</td>
+      <td>DC3</td>
+      <td>#</td>
+      <td>3</td>
+      <td>C</td>
+      <td>S</td>
+      <td>c</td>
+      <td>s</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>EOT</td>
+      <td>DC4</td>
+      <td>$</td>
+      <td>4</td>
+      <td>D</td>
+      <td>T</td>
+      <td>d</td>
+      <td>t</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>ENQ</td>
+      <td>NAK</td>
+      <td>%</td>
+      <td>5</td>
+      <td>E</td>
+      <td>U</td>
+      <td>e</td>
+      <td>u</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>ACK</td>
+      <td>SYN</td>
+      <td>&amp;</td>
+      <td>6</td>
+      <td>F</td>
+      <td>V</td>
+      <td>f</td>
+      <td>v</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>BEL</td>
+      <td>ETB</td>
+      <td>’</td>
+      <td>7</td>
+      <td>G</td>
+      <td>W</td>
+      <td>g</td>
+      <td>w</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>BS</td>
+      <td>CAN</td>
+      <td>(</td>
+      <td>8</td>
+      <td>H</td>
+      <td>X</td>
+      <td>h</td>
+      <td>x</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>HT</td>
+      <td>EM</td>
+      <td>)</td>
+      <td>9</td>
+      <td>I</td>
+      <td>Y</td>
+      <td>i</td>
+      <td>y</td>
+    </tr>
+    <tr>
+      <td>A</td>
+      <td>LF</td>
+      <td>SUB</td>
+      <td>*</td>
+      <td>:</td>
+      <td>J</td>
+      <td>Z</td>
+      <td>j</td>
+      <td>z</td>
+    </tr>
+    <tr>
+      <td>B</td>
+      <td>VT</td>
+      <td>ESC</td>
+      <td>+</td>
+      <td>;</td>
+      <td>K</td>
+      <td>[</td>
+      <td>k</td>
+      <td>{</td>
+    </tr>
+    <tr>
+      <td>C</td>
+      <td>FF</td>
+      <td>FS</td>
+      <td>,</td>
+      <td>&lt;</td>
+      <td>L</td>
+      <td>\</td>
+      <td>l</td>
+      <td>|</td>
+    </tr>
+    <tr>
+      <td>D</td>
+      <td>CR</td>
+      <td>GS</td>
+      <td>-</td>
+      <td>=</td>
+      <td>M</td>
+      <td>]</td>
+      <td>m</td>
+      <td>}</td>
+    </tr>
+    <tr>
+      <td>E</td>
+      <td>SO</td>
+      <td>RS</td>
+      <td>.</td>
+      <td>&gt;</td>
+      <td>N</td>
+      <td>^</td>
+      <td>n</td>
+      <td>~</td>
+    </tr>
+    <tr>
+      <td>F</td>
+      <td>SI</td>
+      <td>US</td>
+      <td>/</td>
+      <td>?</td>
+      <td>O</td>
+      <td>_</td>
+      <td>o</td>
+      <td>DEL</td>
+    </tr>
+  </tbody>
+</table>
+
+<p style="font-size:small">豆: SHIFT + 31-3B → 21-2B / SHIFT + 2C-2F → 3C-3F / SHIFT + 40-5E → 60-7E / CTRL + 40-5F → 00-1F<br>
+(日本語キーボードの場合)</p>
+
+</section>
+<section>
+
+<h3>文字しか送受信できないなら</h3>
+
+<p>矢印キーとかファンクションキーの入力は？</p>
+
+<p>画面上の任意の位置にカーソルを移動するには？</p>
+
+<p>色を変えるには？</p>
+
+</section>
+<section>
+
+<h3>エスケープシーケンス</h3>
+
+<p>ESC + いくつかの文字の組み合わせで一つの機能を表現</p>
+
+<p>xterm の場合:</p>
+
+<ul>
+  <li>
+    <p>右矢印キー(kcuf1) : <code>ESC</code> <code>O</code> <code>C</code></p>
+  </li>
+  <li>
+    <p>カーソル位置移動(cup) : <code>ESC</code> <code>[</code> <em>row</em> <code>;</code> <em>col</em> <code>H</code></p>
+  </li>
+  <li>
+    <p>文字色変更(setaf) : <code>ESC</code> <code>[</code> <code>3</code> <em>color</em> <code>m</code></p>
+  </li>
+</ul>
+
+<p>エスケープシーケンスは端末によって異なる</p>
+
+</section>
+<section>
+
+<h3>terminfo データベース</h3>
+
+<p>端末ごとのエスケープシーケンスを定義</p>
+
+<p>infocmp コマンドで現在の端末の情報を出力</p>
+
+<pre style="font-size: 50%"><code class="language-shell">% infocmp
+#	Reconstructed via infocmp from file: /lib/terminfo/x/xterm-256color
+xterm-256color|xterm with 256 colors,
+	am, bce, ccc, km, mc5i, mir, msgr, npc, xenl,
+	colors#0x100, cols#80, it#8, lines#24, pairs#0x10000,
+	acsc=``aaffggiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~,
+	bel=^G, blink=\E[5m, bold=\E[1m, cbt=\E[Z, civis=\E[?25l,
+	clear=\E[H\E[2J, cnorm=\E[?12l\E[?25h, cr=\r,
+	csr=\E[%i%p1%d;%p2%dr, cub=\E[%p1%dD, cub1=^H,
+	cud=\E[%p1%dB, cud1=\n, cuf=\E[%p1%dC, cuf1=\E[C,
+	cup=\E[%i%p1%d;%p2%dH, cuu=\E[%p1%dA, cuu1=\E[A,
+	cvvis=\E[?12;25h, dch=\E[%p1%dP, dch1=\E[P, dim=\E[2m,
+	dl=\E[%p1%dM, dl1=\E[M, ech=\E[%p1%dX, ed=\E[J, el=\E[K,
+	el1=\E[1K, flash=\E[?5h$&lt;100/&gt;\E[?5l, home=\E[H,
+	hpa=\E[%i%p1%dG, ht=^I, hts=\EH, ich=\E[%p1%d@,
+	il=\E[%p1%dL, il1=\E[L, ind=\n, indn=\E[%p1%dS,
+...
+</code></pre>
+
+</section>
+<section>
+
+<h3>TERM環境変数</h3>
+
+<p>現在の端末=TERM環境変数の値</p>
+
+<ul>
+  <li>
+    <p>端末の機能を使いたいプログラムはTERMの値から現在の端末名を得てterminfoデータベースを参照</p>
+  </li>
+  <li>
+    <p>使ってる端末とTERM変数の値を合わせておかないと動きがおかしくなる</p>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h3>おまけ</h3>
+
+<p>tput コマンドでエスケープシーケンスを出力できる</p>
+
+<pre><code class="language-shell">% tput setaf 1 | od -tx1c
+0000000  1b  5b  33  31  6d
+        033   [   3   1   m
+0000005
+</code></pre>
+
+<p>シェルスクリプトでエスケープシーケンスを出力したいときとかに便利</p>
+
+</section>
+<section>
+
+<h3>端末の機能</h3>
+
+</section>
+<section>
+
+<h3>行編集</h3>
+
+<pre><code class="language-shell">% cat
+abcdefg⏎ ← 入力
+abcdefg
+</code></pre>
+
+<ul>
+  <li>改行するまではプログラムにデータは渡さない</li>
+  <li>BS(0x08)またはDEL(0x7F)で一文字消したり</li>
+  <li>Ctrl-W(0x17)で単語を消したり</li>
+  <li>Ctrl-U(0x15)で行削除したり</li>
+  <li>Ctrl-D(0x04)で入力を終わらせたり</li>
+  <li>矢印キーやCtrl-A,B,E,Fでの移動とかはできない</li>
+</ul>
+
+</section>
+<section>
+
+<h3>シグナル</h3>
+
+<p>Ctrl-C でプログラムが終了する (SIGINT)<br>
+Ctrl-\ でコアダンプして終了する (SIGQUIT)</p>
+
+<h3>フロー制御</h3>
+
+<p>Ctrl-S で出力停止<br>
+Ctrl-Q で再開</p>
+
+</section>
+<section>
+
+<h3>stty - 端末の設定</h3>
+
+<pre style="font-size: 50%"><code class="language-shell">% stty -a
+speed 38400 baud; rows 24; columns 80; line = 0;
+intr = ^C; quit = ^\; erase = ^?; kill = ^U; eof = ^D; eol = &lt;undef&gt;;
+eol2 = &lt;undef&gt;; swtch = &lt;undef&gt;; start = ^Q; stop = ^S; susp = ^Z; rprnt = ^R;
+werase = ^W; lnext = ^V; discard = ^O; min = 1; time = 0;
+-parenb -parodd -cmspar cs8 -hupcl -cstopb cread -clocal -crtscts
+-ignbrk brkint ignpar -parmrk -inpck -istrip -inlcr -igncr icrnl ixon -ixoff
+-iuclc -ixany imaxbel -iutf8
+opost -olcuc -ocrnl onlcr -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0 vt0 ff0
+isig icanon iexten echo echoe echok -echonl -noflsh -xcase -tostop -echoprt
+echoctl echoke -flusho -extproc
+</code></pre>
+
+<p>Ctrl-C でも Ctrl-D でも終わらなくする</p>
+<pre><code class="language-shell">% stty intr undef eof undef
+% cat
+
+</code></pre>
+
+</section>
+<section>
+
+<h3>stty ixany</h3>
+
+<p>Ctrl-S で停止した後、任意のキーで再開</p>
+
+<h3>stty stop undef</h3>
+
+<p>Ctrl-S で停止しなくなる</p>
+
+<p>bash 等で Ctrl-R と組み合わせてヒストリ検索できる</p>
+
+</section>
+<section>
+
+<h3>stty -echo</h3>
+
+<p>エコーバックしない<br>
+パスワードの入力とかにいいかも</p>
+
+<pre><code class="language-shell">% echo -n "Password: "; stty -echo; read pw;
+  stty echo; echo "\nyour password is $pw"
+Password: (入力が見えない)
+your password is hoge hoge
+%
+</code></pre>
+
+</section>
+<section>
+
+<h3>stty -icanon</h3>
+
+<p>行編集モードオフ<br>
+1バイトずつプログラムに渡される</p>
+
+<pre><code class="language-shell">% ruby -e 'loop{puts $stdin.read(1)}'
+abcd⏎ ← 入力
+a
+b
+c
+d
+
+</code></pre>
+
+<pre><code class="language-shell">% stty -icanon; ruby -e 'loop{puts $stdin.read(1)}'
+aa
+bb
+cc
+dd
+</code></pre>
+
+</section>
+<section>
+
+<h3>その他の端末絡みのシグナル</h3>
+
+<p>SIGHUP</p>
+
+<ul>
+  <li>端末が切断された時にプロセスに対して送られる</li>
+  <li>デフォルト動作は終了なので何もしてなければプロセスが終了する</li>
+  <li>デーモンにファイルをリロードさせる用途はどこ由来なんだろう</li>
+</ul>
+
+</section>
+<section>
+
+<p>SIGTSTP</p>
+
+<ul>
+  <li>Ctrl-Z で停止した時に送られる</li>
+  <li>デフォルト動作は Stop</li>
+</ul>
+
+<p>SIGCONT</p>
+
+<ul>
+  <li>fg / bg で再開した時に送られる</li>
+  <li>デフォルト動作は Continue</li>
+</ul>
+
+<p>SIGTSTP を無視すると Ctrl-Z で止まらなくなる</p>
+
+<pre><code class="language-shell">% bash -c 'trap "" SIGTSTP; sleep 9999'
+^Z^Z^Z
+</code></pre>
+
+</section>
+<section>
+
+<p>SIGWINCH</p>
+
+<ul>
+  <li>端末の画面サイズが変更されたときにプロセスに対して送られる</li>
+  <li>デフォルト動作は無視</li>
+  <li>画面サイズが変更されたことをプログラムが知ることができる</li>
+  <li>vim など画面サイズが動作に影響するプログラムで使用される</li>
+</ul>
+
+<pre><code class="language-shell">% ruby -e 'trap(:SIGWINCH){p :SIGWINCH}; sleep'
+:SIGWINCH ← 画面サイズが変更する度に出力される
+:SIGWINCH
+:SIGWINCH
+</code></pre>
+
+</section>
+<section>
+
+<h2>おわり</h2>
+
+</section>

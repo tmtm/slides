@@ -1,0 +1,684 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>MySQLユーザ会のこれまでとこれから</title>
+
+<meta name="description" content="">
+<meta name="author" content="">
+<meta name="generator" content="reveal-ck 4.0.0">
+
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+
+<!-- Code syntax highlighting -->
+<link rel="stylesheet" href="css/reset.css">
+<link rel="stylesheet" href="css/reveal.css">
+<link rel="stylesheet" href="css/theme/tmtms.css" id="theme">
+
+<!-- Theme used for syntax highlighting of code -->
+<link rel="stylesheet" href="lib/css/monokai.css">
+
+<link rel="stylesheet" href="css/reveal-ck.css">
+
+<link rel="stylesheet" href="css/rabbit.css">
+<link rel="stylesheet" href="css/theme/tmtms.css">
+
+<!-- Printing and PDF exports -->
+<script>
+  var link = document.createElement( 'link' );
+  link.rel = 'stylesheet';
+  link.type = 'text/css';
+  link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+  document.getElementsByTagName( 'head' )[0].appendChild( link );
+</script>
+
+  </head>
+
+  <body>
+    <div class="reveal">
+  <div class="slides">
+    <section>
+
+<h2>MySQLユーザ会の</h2>
+<h2>これまでとこれから</h2>
+
+<p>MySQL Technology Cafe #9</p>
+
+<p>2020-08-26</p>
+
+<p>とみたまさひろ</p>
+
+</section>
+<section>
+
+<h2>自己紹介</h2>
+
+<p><img src="images/icon2.jpg" alt="" style="position:absolute;top:0%;right:0;width:180px;border:0px"></p>
+
+<ul>
+  <li>
+    <p>とみたまさひろ</p>
+  </li>
+  <li>
+    <p><a href="https://twitter.com/tmtms">https://twitter.com/tmtms</a></p>
+  </li>
+  <li>
+    <p><a href="https://tmtms.hatenablog.com">https://tmtms.hatenablog.com</a></p>
+  </li>
+  <li>
+    <p>日本MySQLユーザ会の名ばかり代表</p>
+  </li>
+  <li>
+    <p>文字化け担当</p>
+  </li>
+  <li>
+    <p>Ruby / メール</p>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h2>最近の活動 その1</h2>
+
+<h2>mrubyudf</h2>
+
+<p>Ruby で MySQL の UDF を書くためのツール</p>
+
+<p><a href="https://github.com/tmtm/mrubyudf">https://github.com/tmtm/mrubyudf</a></p>
+
+<p><a href="https://tmtms.hatenablog.com/entry/202005/mrubyudf">https://tmtms.hatenablog.com/entry/202005/mrubyudf</a></p>
+
+</section>
+<section>
+
+<h2>最近の活動 その2</h2>
+
+<h2>MySQL Parameters</h2>
+
+<p><a href="https://mysql-params.tmtms.net">https://mysql-params.tmtms.net</a></p>
+
+<p><a href="https://mysql-params.tmtms.net/mysqld/?vers=5.0.96,5.1.72,5.5.62,5.6.49,5.7.31,8.0.21&amp;diff=true">5.0〜8.0</a> / <a href="https://mysql-params.tmtms.net/mysqld/?vers=8.0.11,8.0.12,8.0.13,8.0.14,8.0.15,8.0.16,8.0.17,8.0.18,8.0.19,8.0.20,8.0.21&amp;diff=true">8.0.*</a></p>
+
+<ul>
+  <li>エラーメッセージ追加</li>
+  <li>show variables 追加</li>
+  <li>プラグイン/コンポーネントのパラメータも追加</li>
+</ul>
+
+</section>
+<section>
+
+<h2>最近の活動 その3</h2>
+
+<h3>MySQL徹底入門第4版 🎉</h3>
+
+<p style="font-size: 50%"><a href="https://www.seshop.com/product/detail/23085">https://www.seshop.com/product/detail/23085</a></p>
+<p><img src="images/myna-book.png" alt="" style="width:40%"></p>
+
+<ul>
+  <li>5章「ユーザー管理」</li>
+  <li>11章「文字コードと日本語環境」</li>
+  <li>など、全体の約 1/10</li>
+</ul>
+
+</section>
+<section>
+
+<h2>MySQLユーザ会ができるまで</h2>
+
+</section>
+<section>
+
+<p>記憶が怪しいので嘘かもしれません</p>
+
+</section>
+<section>
+
+<h1>1997年</h1>
+
+</section>
+<section>
+
+<p>会社の内製ツール作成＆メンテ</p>
+
+<p>会社で使ってたDBがInf◯rmix(伏せ字)だった</p>
+
+<p>ESQL/C - C に SQL を埋め込む謎言語</p>
+
+<p>メッチャ使いづらい</p>
+
+</section>
+<section>
+
+<p>「普通にCから使える無料のDBないかなー」</p>
+
+</section>
+<section>
+
+<p>MySQL と Postgres95 を発見</p>
+
+<p style="font-size: 60%;color: #666">当時 Google は無かったらしい<br>
+どうやって探したんだっけ…</p>
+
+</section>
+<section>
+
+<p>テキトーに速度測ってみたら MySQL の方が速かった</p>
+
+<p>「じゃあ MySQL でいいや」</p>
+
+<p>「英語苦手だけど<a href="https://web.archive.org/web/19990221032155/http://www.city.fujisawa.kanagawa.jp:80/%7Elouis/apps/mysql/jman/toc-j.html">日本語マニュアル</a>もあるし」<br>
+(廣川類さん <a href="https://twitter.com/rui_hi">@rui_hi</a> 翻訳)</p>
+
+</section>
+<section>
+
+<p>しかし実はその日本語マニュアルの MySQL の<br>
+バージョンは古かった…</p>
+
+</section>
+<section>
+
+<p>しかたなく英語のマニュアルを読む…</p>
+
+<p>「英語わからん」</p>
+
+<p>「訳しながら読んでると3行前のを忘れる」</p>
+
+<p>「訳した文を書きながら読むか…」</p>
+
+</section>
+<section>
+
+<h2>マニュアルの全文訳完成</h2>
+
+<p>1997/10</p>
+
+<p>質はそれなり</p>
+
+<p>「せっかくだからウェブに公開しよう」</p>
+
+<p style="font-size: 60%;color: #666">（たしか Monty にメールで公開許可もらったはず…）</p>
+
+</section>
+<section>
+
+<p>日本語を検索すると結果がおかしい</p>
+
+<p>(当時のUNIXではEUC-JPが主流)</p>
+
+</section>
+<section>
+
+<p>デフォルトの latin1 だと</p>
+
+<p><code>À</code>(C0) = <code>Á</code>(C1) = <code>Â</code>(C2)…<br>
+= <code>à</code>(E0) = <code>á</code>(E1) = <code>â</code>(E2)…</p>
+
+</section>
+<section>
+
+<p>EUC-JPの日本語文字は 0xA1〜0xFE</p>
+
+<p><code>だ</code>(A4<strong>C0</strong>) = <code>ち</code>(A4<strong>C1</strong>) = <code>ぢ</code>(A4<strong>C2</strong>)…<br>
+= <code>め</code>(A4<strong>E0</strong>) = <code>も</code>(A4<strong>E1</strong>) = <code>ゃ</code>(A4<strong>E2</strong>)…</p>
+
+</section>
+<section>
+
+<p>「latin1 じゃなくて binary を使えば解決！」</p>
+
+<p>(binary はすべての文字を区別)</p>
+
+</section>
+<section>
+
+<p>ところが<br>
+<code>LIKE "%海%"</code> で「続く」がマッチ！</p>
+
+</section>
+<section>
+
+<p>「%海%」: * B3 A4 *</p>
+
+<p>「続く」: C2 <strong>B3 A4</strong> AF</p>
+
+</section>
+<section>
+
+<p>「バイト単位の比較ではダメだ…」</p>
+
+<p>LIKE で文字単位にマッチングさせるパッチを作成</p>
+
+</section>
+<section>
+
+<h2>日本語 EUC パッチ誕生</h2>
+
+<p>1997/11</p>
+
+<p>文字コード名は jeuc</p>
+
+</section>
+<section>
+
+<h1>1998年</h1>
+
+</section>
+<section>
+
+<p>個人宛にメールで問い合わせが来るけど<br>
+情報が個人間に閉じるのがもったいない</p>
+
+<p>「誰かメーリングリスト作ってくれないかなー」</p>
+
+<p>とウェブページに書いたら</p>
+
+</section>
+<section>
+
+<p>「作ってみた」 by ソフトエージェンシー</p>
+
+</section>
+<section>
+
+<h2>メーリングリスト発足</h2>
+
+<p>1998/1</p>
+
+</section>
+<section>
+
+<p>当時のフリーソフトウェア界隈のMLは</p>
+
+<p>初心者に厳しくて殺伐としてた</p>
+
+<p>それは嫌だったのでゆるふわなML運営</p>
+
+</section>
+<section>
+
+<p>メーリングリストで「シフトJISを使いたい」</p>
+
+</section>
+<section>
+
+<p>シフトJISは2バイト目に 5C(<code>\</code>) がある</p>
+
+<p><code>表</code>(95 <strong>5C</strong>)</p>
+
+<p>「<strong>十</strong>倍の<strong>能</strong>力が<strong>噂</strong>の<strong>表</strong>計算<strong>ソ</strong>フト」</p>
+
+<p>「表n」→「95 \ n」→「95 改行」</p>
+
+<p>LIKE だけじゃなくて文字列全般的な考慮が必要</p>
+
+</section>
+<section>
+
+<p>似たようなマルチバイトcharset BIG5 があったので<br>
+それを真似てシフトJIS対応パッチを作成</p>
+
+</section>
+<section>
+
+<h2>UJIS&amp;SJIS対応パッチ誕生</h2>
+
+<p>1998/3</p>
+
+<p>この頃から jeuc から ujis に名前を変えたらしい</p>
+
+<p>当時は ujis または eucjp が一般的だった</p>
+
+<p>(ujis と sjis で韻を踏んでるし…)</p>
+
+</section>
+<section>
+
+<h2>3.21.30 にパッチが取り込まれる</h2>
+
+<p>1998/5</p>
+
+<p>パッチをあてなくても普通に日本語が使えるように</p>
+
+<p>リリース頻度が早くてパッチのメンテも大変だったのでパッチを送ったら取り込まれた</p>
+
+</section>
+<section>
+
+<p>MySQLで日本語が使えてるのは私のおかげ(?)</p>
+
+<p style="font-size: 60%;color: #666">(その後ユニコード対応時に実装され直したけど)</p>
+
+</section>
+<section>
+
+<p>でもその後も <code>configure --with-charset=ujis</code> でエラーになるとかあったらしい</p>
+
+<p>パッチが取り込まれたといっても安心できない…</p>
+
+</section>
+<section>
+
+<h2>MySQL/Ruby</h2>
+
+<p>1998/8</p>
+
+<p>1998年頃から Ruby を使い始めたらしい</p>
+
+<p>Perl を使ってたけどCライブラリとのバインディングが作りにくかったので Ruby を使い始めた</p>
+
+<p>Ruby の MySQL ライブラリが無かったので作った</p>
+
+</section>
+<section>
+
+<p>RailsとかでMySQLが使えてるのは私のおかげ(?)</p>
+
+<p style="font-size: 60%;color: #666">(今はもう使われてないけど)</p>
+
+</section>
+<section>
+
+<h1>2000年</h1>
+
+</section>
+<section>
+
+<p>MLの過去ログをウェブで公開したい</p>
+
+</section>
+<section>
+
+<p>どこのサーバー使おうか</p>
+
+<p>せっかくだからドメイン名とる？</p>
+
+<p>「日本MySQLユーザ会」とかでっちあげて<br>
+mysql.gr.jp とっちゃえ</p>
+
+</section>
+<section>
+
+<h2>日本MySQLユーザ会 発足</h2>
+
+<p>2000/3</p>
+
+<p>ドメイン名を取るためには<br>
+代表者を決めないといけないので<br>
+流れで自分が代表者に</p>
+
+</section>
+<section>
+
+<p>略称候補は色々あったけど</p>
+
+<blockquote>
+  <p>MySQLって、日本じゃマイナー(MINOR）だよね。それは昔の話さ。と言える日をまつ人の集団。</p>
+</blockquote>
+
+<p><a href="http://www.mysql.gr.jp/mysqlml/mysql/msg/1730">http://www.mysql.gr.jp/mysqlml/mysql/msg/1730</a></p>
+
+<p>ということで MyNA に</p>
+
+<p style="font-size: 60%;color: #666">(当時は PostgreSQL がメジャーだった)</p>
+
+</section>
+<section>
+
+<h2>MyNA の目的</h2>
+
+<ul>
+  <li>日本での MySQL の普及を図る。</li>
+  <li>ユーザ間のコミュニケーションを図る。</li>
+  <li>MySQL の日本語化の検証/開発を行なう。</li>
+</ul>
+
+</section>
+<section>
+
+<h2>ユーザ会発足後</h2>
+
+</section>
+<section>
+
+<h2>MySQL徹底入門</h2>
+
+<p>2000/4 に出版社から打診（早！<br>
+2001/1 発売<br>
+<img src="images/1st.jpg" alt="" style="width:30%"></p>
+
+</section>
+<section>
+
+<h2>MySQL 3.23 リリース</h2>
+
+<p>2001/1</p>
+
+</section>
+<section>
+
+<h2>MySQL 4.0 リリース</h2>
+
+<p>2003/3</p>
+
+</section>
+<section>
+
+<h2>MySQL 4.1 リリース</h2>
+
+<p>2004/10</p>
+
+<p>文字コードまわりの突然の変更！</p>
+
+</section>
+<section>
+
+<ul>
+  <li>Unicode サポート</li>
+  <li>カラム毎に文字コード指定可能</li>
+  <li>接続に合わせてサーバー側で文字コード変換</li>
+</ul>
+
+<p>バージョン 0.1 しか違わないのに…</p>
+
+<p>文字コード変換まわりで日本語の闇が表面化<br>
+「JISに無い文字が消える」<br>
+MyNA でパッチ作成したり</p>
+
+</section>
+<section>
+
+<h2>MySQL 5.0 リリース</h2>
+
+<p>2005/10</p>
+
+</section>
+<section>
+
+<h2>MySQL 5.1 リリース</h2>
+
+<p>2008/11</p>
+
+</section>
+<section>
+
+<h2>MySQL 5.5 リリース</h2>
+
+<p>2010/12</p>
+
+<ul>
+  <li>utf8mb4 追加</li>
+</ul>
+
+</section>
+<section>
+
+<h2>MySQL 5.6 リリース</h2>
+
+<p>2013/2</p>
+
+<ul>
+  <li>utf8mb4_unicode_520_ci</li>
+</ul>
+
+</section>
+<section>
+
+<h2>MySQL 5.7 リリース</h2>
+
+<p>2015/10</p>
+
+</section>
+<section>
+
+<h2>MySQL 8.0  リリース</h2>
+
+<p>2018/4</p>
+
+<p>デフォルトが utf8mb4 に 🎉<br>
+文字化けさよなら</p>
+
+<ul>
+  <li>utf8mb4_0900_ai_ci</li>
+  <li>utf8mb4_0900_as_ci</li>
+  <li>utf8mb4_0900_as_cs</li>
+  <li>utf8mb4_ja_0900_as_cs</li>
+  <li>utf8mb4_ja_0900_as_cs_ks</li>
+</ul>
+
+</section>
+<section>
+
+<h2>これから</h2>
+
+</section>
+<section>
+
+<h2>MyNA の目的</h2>
+
+<ul>
+  <li>日本での MySQL の普及を図る。</li>
+  <li>ユーザ間のコミュニケーションを図る。</li>
+  <li>MySQL の日本語化の検証/開発を行なう。</li>
+</ul>
+
+</section>
+<section>
+
+<h3>日本での MySQL の普及を図る。</h3>
+
+<p>十分メジャー</p>
+
+<p>もうマイナーじゃない</p>
+
+</section>
+<section>
+
+<h3>MySQL の日本語化の検証/開発を行なう。</h3>
+
+<p>最近はだいたい問題ない</p>
+
+<p>4.1 以降は文字コードまわりは安定してる</p>
+
+</section>
+<section>
+
+<h3>ユーザ間のコミュニケーションを図る。</h3>
+
+<p>これか！？</p>
+
+</section>
+<section>
+
+<h2>イベントは盛ん</h2>
+
+<p>主に sakaik さんと yoku0825 さんとオラクルさん</p>
+
+</section>
+<section>
+
+<h2>オンラインコミュニケーション</h2>
+
+</section>
+<section>
+
+<h3>いまどきメーリングリストはないよね</h3>
+
+<p>メーリングリストの流量</p>
+
+<p><img src="images/ml.png" alt=""></p>
+
+</section>
+<section>
+
+<h2>Slack ？</h2>
+
+<p>外部サービスに依存するのは避けたい</p>
+
+<p>登録しないと見れないのもアレ</p>
+
+<p>🙄</p>
+
+</section>
+<section>
+
+<p>考え中</p>
+
+<p style="font-size:200%">😪</p>
+
+</section>
+<section>
+
+<p>おわり</p>
+
+<p style="font-size:300%">😴</p>
+
+</section>
+
+  </div>
+</div>
+
+<script src="js/reveal.js"></script>
+
+
+<script>
+  (function() {
+  function extend( a, b ) {
+    for(var i in b) {
+      a[i] = b[i];
+    }
+  }
+  var baseOptions = {
+    transition: 'default',
+    hash: true,
+    dependencies: [
+      { src: 'plugin/markdown/marked.js' },
+      { src: 'plugin/markdown/markdown.js' },
+      { src: 'plugin/highlight/highlight.js' },
+      { src: 'plugin/notes/notes.js', async: true }
+    ]
+  };
+
+    baseOptions.dependencies.push({ src: 'plugin/rabbit/rabbit.js', async: true });
+
+  var configOptions = {"controls":true,"postgress":true,"slideNumber":true,"history":true,"overview":true,"enter":true,"touch":false,"loop":false,"rtl":false,"fragments":true,"autoSlide":0,"autoSlideStoppable":false,"mouseWheel":false,"transition":"default","transitionSpeed":"fast","alloted_time":1200}
+  var initializeOptions = {};
+  extend(initializeOptions, baseOptions);
+  extend(initializeOptions, configOptions);
+  Reveal.initialize(initializeOptions);
+})();
+
+</script>
+
+  </body>
+</html>

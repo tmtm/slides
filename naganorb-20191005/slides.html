@@ -1,0 +1,297 @@
+<section>
+
+<h1>Golf</h1>
+
+<p>とみたまさひろ</p>
+
+<p>2019-10-05</p>
+
+<p>Nagano.rb #3</p>
+
+</section>
+<section>
+
+<h2>自己紹介</h2>
+
+<p><img src="images/icon2.jpg" alt="" style="position:absolute;top:10%;right:0;width:160px;border:0px"></p>
+
+<ul>
+  <li>とみたまさひろ</li>
+  <li><a href="https://twitter.com/tmtms">@tmtms</a></li>
+  <li><a href="https://tmtms.hatenablog.com">https://tmtms.hatenablog.com</a></li>
+  <li>富士通クラウドテクノロジーズ</li>
+  <li>東京単身赴任中</li>
+  <li>Ruby / MySQL / Postfix</li>
+  <li>趣味: 文字化け解析</li>
+  <li>最近Ruby書いてない</li>
+</ul>
+
+</section>
+<section>
+
+<h2>最近はゴルフで遊んでます</h2>
+
+</section>
+<section>
+
+<h2>ゴルフ場</h2>
+
+<p><a href="http://golf.shinh.org/">http://golf.shinh.org/</a></p>
+
+<p><img src="images/golf.png" alt="" style="width:80%"></p>
+
+</section>
+<section>
+
+<h2>コードゴルフ</h2>
+
+<blockquote>
+  <p>コードゴルフはコンピュータプログラミング・コンテストの一種。参加者は与えられたアルゴリズムを、可能な限りもっとも短いソースコードで記述することを競う。<br>
+ショートコーディング、コードパズル等とも呼ばれる。</p>
+</blockquote>
+
+<p><a href="https://ja.wikipedia.org/wiki/コードゴルフ">https://ja.wikipedia.org/wiki/コードゴルフ</a></p>
+
+</section>
+<section>
+
+<h2>例</h2>
+
+<p>入力</p>
+
+<pre><code class="language-text">TEST
+foo bar baz
+The quick brown fox jumps over the lazy dog.
+</code></pre>
+
+<p>出力</p>
+
+<pre><code class="language-text">1 1 4 TEST
+2 3 11 foo bar baz
+3 9 44 The quick brown fox jumps over the lazy dog.
+</code></pre>
+
+<p style="font-size:70%"><a href="https://magazine.rubyist.net/articles/0023/0023-RubiMaGolf.html">https://magazine.rubyist.net/articles/0023/0023-RubiMaGolf.html</a></p>
+
+</section>
+<section>
+
+<h2>普通</h2>
+
+<p>80 byte</p>
+
+<pre><code class="language-ruby">i = 0
+while l = gets
+  i += 1
+  puts "#{i} #{l.split.size} #{l.size-1} #{l}"
+end
+</code></pre>
+
+</section>
+<section>
+
+<h2>ゴルファーが書くと</h2>
+
+<p>38 byte</p>
+
+<pre><code>#!ruby -ap
+$&gt;&lt;&lt;[$.,$F.size,~/$/,p]*" "
+</code></pre>
+
+</section>
+<section>
+
+<h3>shebang</h3>
+
+<pre><code>#!ruby オプション
+</code></pre>
+
+<p>コマンドラインオプションをスクリプト内で指定</p>
+
+<p>本来は、OSがコマンド実行時に先頭が <code>#!</code> で始まっているものをスクリプトとして処理するためのもの</p>
+
+<p>Ruby も1行目を同様に処理をする</p>
+
+</section>
+<section>
+
+<pre><code>#!ruby -ap
+...
+</code></pre>
+
+<ul>
+  <li>
+<code>-p</code>
+    <ul>
+      <li>標準入力を1行 <code>$_</code> に入れる</li>
+      <li>スクリプトを実行する</li>
+      <li>処理の最後に <code>$_</code> を出力する</li>
+      <li>標準入力がなくなるまで繰り返し</li>
+    </ul>
+  </li>
+  <li>
+<code>-a</code>
+    <ul>
+      <li>
+<code>$_</code> を分割して <code>$F</code> に入れる</li>
+    </ul>
+  </li>
+</ul>
+
+<pre><code class="language-ruby">while $_ = $stdin.gets
+  $F = $_.split
+  ...
+  puts $_
+end
+</code></pre>
+
+</section>
+<section>
+
+<h3>2行目</h3>
+
+<pre><code class="language-ruby">$&gt;&lt;&lt;[$.,$F.size,~/$/,p]*" "
+</code></pre>
+
+<p><code>$&gt;</code> = <code>$stdout</code></p>
+
+<p><code>IO#&lt;&lt;</code> = <code>IO#print</code></p>
+
+<p><code>$.</code> = 行番号</p>
+
+<p><code>~/.../</code> = <code>$_ =~ /.../</code></p>
+
+<p><code>Array#*</code> = <code>Array#join</code></p>
+
+</section>
+<section>
+
+<h3><code>p</code></h3>
+
+<p>デバッグ出力用のメソッド</p>
+
+<pre><code class="language-ruby">require 'date'
+p Date.today
+#=&gt; #&lt;Date: 2019-10-05 ((2458762j,0s,0n),+0s,2299161j)&gt;
+</code></pre>
+
+</section>
+<section>
+
+<h3><code>p</code></h3>
+
+<p>引数を与えないと何も出力しない</p>
+
+<p>戻り値が <code>nil</code></p>
+
+<p><code>nil</code> の代わりに <code>p</code> と書ける</p>
+
+</section>
+<section>
+
+<pre><code class="language-ruby">i = 0
+while l = gets
+  i += 1
+  puts "#{i} #{l.split.size} #{l.size-1} #{l}"
+end
+</code></pre>
+<p>↓</p>
+<pre><code>#!ruby -ap
+$&gt;&lt;&lt;[$.,$F.size,~/$/,p]*" "
+</code></pre>
+
+</section>
+<section>
+
+<p>同じことをいろんな書き方ができるRuby向き</p>
+
+</section>
+<section>
+
+<h2>その他 Tips</h2>
+
+<h3>括弧省略</h3>
+
+<pre><code>p(123)
+</code></pre>
+<p>↓</p>
+<pre><code>p 123
+</code></pre>
+
+</section>
+<section>
+
+<h3>空白をなくす</h3>
+
+<pre><code>p 123 if true
+hoge "abc"
+</code></pre>
+<p>↓</p>
+<pre><code>p 123if true
+hoge"abc"
+</code></pre>
+
+</section>
+<section>
+
+<h3>文字列中の式展開</h3>
+
+<pre><code>"abc #{hoge} xyz"
+</code></pre>
+
+<p><code>$</code> や <code>@</code> で始まる変数は <code>{</code> <code>}</code> を省略可能</p>
+
+<pre><code>"abc #$_ xyz"
+</code></pre>
+
+</section>
+<section>
+
+<h3>スクリプト末尾の改行を取る</h3>
+
+<p>これで1文字削減！</p>
+
+</section>
+<section>
+
+<h3>るびまゴルフ</h3>
+
+<p><a href="https://magazine.rubyist.net/articles/0021/0021-RubiMaGolf.html">https://magazine.rubyist.net/articles/0021/0021-RubiMaGolf.html</a></p>
+
+<h3>Ruby Code Golf Technic</h3>
+
+<p><a href="https://qiita.com/tbpgr/items/775636617d58bed56657">https://qiita.com/tbpgr/items/775636617d58bed56657</a></p>
+
+<h3>RubyのコードゴルフのTips</h3>
+
+<p><a href="https://qiita.com/siman/items/d67643066e591b2f34ab">https://qiita.com/siman/items/d67643066e591b2f34ab</a></p>
+
+</section>
+<section>
+
+<p><a href="http://golf.shinh.org/">http://golf.shinh.org/</a></p>
+
+<ul>
+  <li>
+    <p>入出力のサンプルさえ満たせばいい</p>
+  </li>
+  <li>
+    <p>例外で終了してもいい</p>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h2>ruby-jp</h2>
+
+<p><a href="https://ruby-jp.github.io/">https://ruby-jp.github.io/</a></p>
+
+<p><code>#codegolf</code> : ゴルフで遊んでいる人たち</p>
+
+</section>
+<section>
+
+<h1>Enjoy Golf !</h1>
+
+</section>

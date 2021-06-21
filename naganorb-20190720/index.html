@@ -1,0 +1,858 @@
+<!doctype html>
+<html lang="en">
+  <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+    <meta charset="utf-8">
+
+<title>Rubyについてあれこれ</title>
+
+<meta name="description" content="">
+<meta name="author" content="">
+<meta name="generator" content="reveal-ck 3.9.1">
+
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+<link rel="stylesheet" href="css/reveal.css">
+<link rel="stylesheet" href="css/theme/tmtms.css" id="theme">
+
+<!-- Code syntax highlighting -->
+<link rel="stylesheet" href="lib/css/zenburn.css">
+
+<link rel="stylesheet" href="css/reveal-ck.css">
+
+<link rel="stylesheet" href="css/rabbit.css">
+<link rel="stylesheet" href="css/theme/tmtms.css">
+
+<!-- Printing and PDF exports -->
+<script>
+  var link = document.createElement( 'link' );
+  link.rel = 'stylesheet';
+  link.type = 'text/css';
+  link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+  document.getElementsByTagName( 'head' )[0].appendChild( link );
+</script>
+
+<!--[if lt IE 9]>
+<script src="lib/js/html5shiv.js"></script>
+<![endif]-->
+
+  </head>
+
+  <body>
+    <div class="reveal">
+  <!-- Any section element inside of this container is displayed as a slide -->
+  <div class="slides">
+    <section>
+
+<h2>Rubyについてあれこれ</h2>
+
+<p>とみたまさひろ</p>
+
+<p>2019-07-20</p>
+
+<p>nagano.rb #2</p>
+
+</section>
+<section>
+
+<h2>自己紹介</h2>
+
+<p><img src="images/icon.jpg" alt="" style="position:absolute;top:10%;right:0;width:160px;border:0px"></p>
+
+<ul>
+  <li>とみたまさひろ</li>
+  <li><a href="https://twitter.com/tmtms">@tmtms</a></li>
+  <li><a href="https://tmtms.hatenablog.com">https://tmtms.hatenablog.com</a></li>
+  <li>長野在住 / 去年から東京に単身赴任</li>
+  <li>富士通クラウドテクノロジーズ</li>
+  <li>日本MySQLユーザ会</li>
+  <li>得意技: 文字化け</li>
+</ul>
+
+</section>
+<section>
+
+<p>OSS貢献者賞</p>
+
+<p><img src="images/OSS%E8%B2%A2%E7%8C%AE%E8%80%85%E8%B3%9E.jpg" alt="" style="height:400px"></p>
+
+<p style="font-size: small">2013</p>
+
+</section>
+<section>
+
+<p>書籍執筆</p>
+
+<p><img src="images/MySQL_Book.jpg" alt="" style="height:300px"> <img src="images/MySQL_Dic.jpg" alt="" style="height:300px"> <img src="images/Postfix_Book.jpg" alt="" style="height:300px"></p>
+
+<p style="font-size: small">2000-2011 / 2007 / 2006</p>
+
+</section>
+<section>
+
+<p>雑誌寄稿</p>
+
+<p><img src="images/SoftwareDesign201509.jpg" alt="" style="height:250px"> <img src="images/SoftwareDesign201606.jpg" alt="" style="height:250px"> <img src="images/SoftwareDesign201609.jpg" alt="" style="height:250px"> <img src="images/SoftwareDesign201612.jpg" alt="" style="height:250px"> <img src="images/SoftwareDesign201707.jpg" alt="" style="height:250px"></p>
+
+<p style="font-size: small">201509 / 201606 / 201609 / 201612 / 201707</p>
+
+</section>
+<section>
+
+<h2>Ruby</h2>
+
+<ul>
+  <li>第一言語</li>
+  <li>Ruby歴20数年</li>
+  <li>Ruby/MySQL作成(1998〜)
+    <ul>
+      <li>今はもう使われてない</li>
+    </ul>
+  </li>
+  <li>ほぼ一年Ruby書いてない… 😇</li>
+</ul>
+
+</section>
+<section>
+
+<h1>Ruby</h1>
+
+</section>
+<section>
+
+<h2>日本発</h2>
+<h2>スクリプト言語</h2>
+<h2>オブジェクト指向言語</h2>
+<h2>動的言語</h2>
+
+</section>
+<section>
+
+<h2>日本発</h2>
+<h2 style="color: #aaa">スクリプト言語</h2>
+<h2 style="color: #aaa">オブジェクト指向言語</h2>
+<h2 style="color: #aaa">動的言語</h2>
+
+</section>
+<section>
+
+<p>作者が日本人</p>
+
+<p><img src="images/matz.png" alt=""></p>
+
+<p>広く世界で使われている言語で<br>
+作者が日本人というのはあんまりない</p>
+
+</section>
+<section>
+
+<ul>
+  <li>
+    <p>日本人利用者も多い</p>
+  </li>
+  <li>国内に地域Rubyコミュニティが多い
+    <ul>
+      <li>なんとか.rb</li>
+      <li>なんとかruby</li>
+    </ul>
+  </li>
+  <li>
+    <p>日本語のドキュメントが多い</p>
+  </li>
+  <li>
+    <p>コミッターにも日本人が多い</p>
+  </li>
+  <li>日本語で質問できる</li>
+</ul>
+
+</section>
+<section>
+
+<h2>RubyKaigi</h2>
+
+<p>世界最大の国際Rubyカンファレンス<br>
+<a href="http://rubykaigi.org">http://rubykaigi.org</a><br>
+国内で国際カンファレンスに参加できる</p>
+
+<p>2016年から地方開催</p>
+
+<p>2016 京都市<br>
+2017 広島市<br>
+2018 仙台市<br>
+2019 福岡市</p>
+
+</section>
+<section>
+
+<h3>RubyKaigi 2020</h3>
+
+<p>4/9 - 11</p>
+
+<h2>🎉  松本市で開催 ㊗</h2>
+
+<p><a href="https://rubykaigi.org/2020">https://rubykaigi.org/2020</a></p>
+
+<p class="fragment fade-in" style="color: #aaa">初の県庁所在地以外開催</p>
+
+<p class="fragment fade-in" style="color: #aaa">長野市涙目 (;_;)</p>
+
+</section>
+<section>
+
+<h2>何故松本？</h2>
+<h2>名前繋がりという噂</h2>
+
+</section>
+<section>
+
+<h3>RubyKaigi 2020</h3>
+
+<p>2019福岡ではなんと県知事が登壇<br>
+<a href="http://www.pref.fukuoka.lg.jp/contents/rubykaigi2019.html" style="font-size:70%">http://www.pref.fukuoka.lg.jp/contents/rubykaigi2019.html</a></p>
+
+<p>長野県どーする!?</p>
+
+<p>アルクマ来ないかな</p>
+
+</section>
+<section>
+
+<h2 style="color: #aaa">日本発</h2>
+<h2>スクリプト言語</h2>
+<h2 style="color: #aaa">オブジェクト指向言語</h2>
+<h2 style="color: #aaa">動的言語</h2>
+
+</section>
+<section>
+
+<h3>スクリプト言語</h3>
+
+<blockquote>
+  <p>スクリプト言語とは、プログラミング言語のうち、プログラムの記述や実行を比較的簡易に行うことができる言語の総称である。</p>
+</blockquote>
+
+<p><a href="https://www.weblio.jp/content/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%97%E3%83%88%E8%A8%80%E8%AA%9E">https://www.weblio.jp/content/スクリプト言語</a></p>
+
+</section>
+<section>
+
+<h2>スクリプト言語</h2>
+
+<p>要するにプログラムを書いてサクッと実行できる</p>
+
+<ul>
+  <li>インタプリタ
+    <ul>
+      <li>逐次実行</li>
+    </ul>
+  </li>
+  <li>コンパイル
+    <ul>
+      <li>実行時に内部的にコンパイルされてから実行</li>
+    </ul>
+  </li>
+</ul>
+
+<p style="font-size: 70%">明にコンパイル作業が必要なものはスクリプトとは呼ばない(たぶん)</p>
+
+</section>
+<section>
+
+<h3>インタプリタ</h3>
+
+<pre><code class="language-bash">echo 123
+echo 456 &gt;  # error
+echo 789
+</code></pre>
+
+<pre style="font-size: 60%"><code class="language-txt">% bash hoge.sh
+123
+hoge.sh: 行 3: 予期しないトークン `newline' 周辺に構文エラーがあります
+hoge.sh: 行 3: `echo 456 &gt;  # error'
+</code></pre>
+
+<p>文法エラーがあっても途中まで実行される</p>
+
+</section>
+<section>
+
+<h3>Rubyはコンパイルしてから実行</h3>
+
+<pre><code class="language-ruby">p 123
+p 456 _  # error
+p 789
+</code></pre>
+
+<pre style="font-size: 60%"><code class="language-txt">% ruby hoge.rb
+hoge.rb:2: syntax error, unexpected tIDENTIFIER, expecting end-of-input
+p 456 _  # error
+</code></pre>
+
+<p>文法エラーがあったら実行されない</p>
+
+</section>
+<section>
+
+<h2 style="color: #aaa">日本発</h2>
+<h2 style="color: #aaa">スクリプト</h2>
+<h2>オブジェクト指向</h2>
+<h2 style="color: #aaa">動的</h2>
+
+</section>
+<section>
+
+<blockquote>
+  <p>オブジェクト指向とは、コンピュータプログラムの設計や実装についての考え方の一つで、互いに密接に関連するデータと手続き（処理手順）をオブジェクト（object）と呼ばれる一つのまとまりとして定義し、様々なオブジェクトを組み合わせて関連性や相互作用を記述していくことによりシステム全体を構築していく手法。</p>
+</blockquote>
+
+<p><a href="http://e-words.jp/w/%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E6%8C%87%E5%90%91.html">http://e-words.jp/w/オブジェクト指向.html</a></p>
+
+</section>
+<section>
+
+<h4>オブジェクト自身ができることを知っている</h4>
+
+<ul>
+  <li>C: オブジェクト指向でない
+    <pre><code class="language-C">strlen("HOGE");  //=&gt; 4
+</code></pre>
+  </li>
+  <li>Ruby: オブジェクト指向
+    <pre><code class="language-ruby">"HOGE".length  #=&gt; 4
+</code></pre>
+  </li>
+</ul>
+
+<p>Rubyの「オブジェクト指向」は<br>
+これくらいの理解でいいような気がする</p>
+
+</section>
+<section>
+
+<h3>Rubyプログラムの例</h3>
+
+<pre><code class="language-ruby"># クラス定義
+class Hoge
+  # 初期化
+  def initialize(arg)
+    @arg = arg  # インスタンス変数に引数を記憶
+  end
+
+  # 初期化時に渡された引数を表示
+  def fuga
+    puts @arg
+  end
+end
+
+hoge = Hoge.new("abc")  # Hogeクラスのオブジェクト生成
+hoge.fuga               # "abc"が出力される
+</code></pre>
+
+</section>
+<section>
+
+<h3>言語仕様としての命名規則</h3>
+
+<ul>
+  <li>変数の1文字目
+    <ul>
+      <li>大文字:  定数(クラスも定数)</li>
+      <li>「$」:  グローバル変数</li>
+      <li>「@」: インスタンス変数</li>
+      <li>小文字や記号以外の文字:<br>
+ローカル変数 / メソッド</li>
+    </ul>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h3>メソッド名の末尾に「!」「?」を使用可</h3>
+
+<ul>
+  <li>
+<code>hoge!</code>
+    <ul>
+      <li>ちょっと注意が必要</li>
+      <li>破壊的メソッドとか</li>
+    </ul>
+  </li>
+  <li>
+<code>hoge?</code>
+    <ul>
+      <li>真偽値を返す</li>
+      <li>他の言語で<code>isHoge()</code>みたいな</li>
+    </ul>
+  </li>
+</ul>
+
+<p>強制ではないけど倣っといた方が無難</p>
+
+</section>
+<section>
+
+<h3>Rubyでは値はすべてがオブジェクト</h3>
+
+<p>数値 / 文字列 / シンボル / 配列<br>
+ture / false / nil 等々</p>
+
+<p>オブジェクトではない基本型(プリミティブ型)<br>
+というものは無い</p>
+
+</section>
+<section>
+
+<h3>オブジェクトの真偽値</h3>
+
+<ul>
+  <li>
+    <p>false, nil だけが偽</p>
+  </li>
+  <li>
+    <p>その他の値(オブジェクト)はすべて真</p>
+    <ul>
+      <li>0, 空文字列, 空配列等も真</li>
+    </ul>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h3>クラスを調べる</h3>
+
+<pre><code class="language-ruby">123.class     #=&gt; Integer
+"Hoge".class  #=&gt; String
+:sym.class    #=&gt; Symbol
+[1,2,3].class #=&gt; Array
+true.class    #=&gt; TrueClass
+false.class   #=&gt; FalseClass
+nil.class     #=&gt; NilClass
+</code></pre>
+
+</section>
+<section>
+
+<h3>クラスもオブジェクト</h3>
+
+<p>クラスはClassクラスのオブジェクト</p>
+
+<pre><code class="language-ruby">class B &lt; A
+end
+
+B.class       #=&gt; Class
+B.superclass  #=&gt; A
+</code></pre>
+
+</section>
+<section>
+
+<h3>Class.new でクラスを作れる</h3>
+
+<pre><code class="language-ruby">B = Class.new(A)
+</code></pre>
+
+<p>↑と↓は同じ</p>
+
+<pre><code>class B &lt; A; end
+</code></pre>
+
+</section>
+<section>
+
+<h3>メソッドはオブジェクトではない</h3>
+
+<pre><code class="language-ruby">def hoge
+end
+hoge  # …として参照するとメソッド呼び出し
+</code></pre>
+
+<p>残念</p>
+
+</section>
+<section>
+
+<h3>オブジェクト化もできる</h3>
+
+<p style="font-size: 80%">methodメソッドはメソッドをMethodオブジェクト化する</p>
+
+<pre><code class="language-ruby">m = method(:hoge)
+p m
+#=&gt; #&lt;Method: main.hoge&gt;
+</code></pre>
+
+</section>
+<section>
+
+<h3>演算子もメソッド</h3>
+
+<pre><code class="language-ruby">1 + 2 * 3  #=&gt; 7
+</code></pre>
+
+<p>↑は↓と同じ</p>
+
+<pre><code class="language-ruby">1.+(2.*(3))  #=&gt; 7
+</code></pre>
+
+</section>
+<section>
+
+<h3>ブロック</h3>
+
+<pre><code class="language-ruby"># 各要素に対して繰り返し
+array.each do |e|
+   ...
+end
+
+# 指定回数繰り返し
+5.times do |i|
+  ...
+end
+
+# ブロック終了時にファイルをクローズ
+File.open("filename.txt") do |f|
+  f.read
+  ...
+end
+</code></pre>
+
+</section>
+<section>
+
+<h3>ブロックを受け取る側</h3>
+
+<pre><code class="language-ruby">def each
+  yield(x)  # ブロックを引数xで実行
+end
+
+# ブロックをオブジェクトとして受け取る
+def each(&amp;block)
+  block.call(x)  # ブロックを引数xで実行
+  sub(&amp;block)    # 他のメソッドに渡す
+  block.class    #=&gt; Proc
+end
+</code></pre>
+
+</section>
+<section>
+
+<h3>Procオブジェクトの作成</h3>
+
+<pre><code class="language-ruby">a = proc{|a, b| ... }   # 引数省略可
+b = lambda{|a, b| ... } # 引数省略不可
+c = -&gt;(a, b){ ... }     # lambda{|a, b| ... } と同じ
+
+5.times(&amp;a)
+</code></pre>
+
+</section>
+<section>
+
+<h2 style="color: #aaa">日本発</h2>
+<h2 style="color: #aaa">スクリプト</h2>
+<h2 style="color: #aaa">オブジェクト指向</h2>
+<h2>動的</h2>
+
+</section>
+<section>
+
+<h3>動的型つけ</h3>
+
+<p>変数 / 引数 / メソッドの戻り値に型がない</p>
+
+<pre><code class="language-ruby">def hoge
+  var = 123
+  var = "hoge" if rand &gt; 0.5
+  return var
+end
+</code></pre>
+
+</section>
+<section>
+
+<h3>既存のクラスにメソッド追加</h3>
+
+<pre><code class="language-ruby">class Integer
+  def hoge
+    "hoge" * self
+  end
+end
+
+5.hoge  #=&gt; "hogehogehogehogehoge"
+</code></pre>
+
+</section>
+<section>
+
+<h3>既存のメソッドを変更</h3>
+
+<pre><code class="language-ruby">5 + 10  #=&gt; 15
+
+class Integer
+  def +(other)
+    self * other
+  end
+end
+
+5 + 10  #=&gt; 50
+</code></pre>
+
+</section>
+<section>
+
+<pre><code class="language-ruby">class Integer
+  alias orig_plus +
+  def +(other)
+    if rand &gt; 0.5
+      self.orig_plus(other)
+    else
+      self * other
+    end
+  end
+end
+
+5 + 10  #=&gt; 15
+5 + 10  #=&gt; 50
+5 + 10  #=&gt; 15
+5 + 10  #=&gt; 15
+5 + 10  #=&gt; 50
+</code></pre>
+
+</section>
+<section>
+
+<h3>クラス/メソッド定義が動的</h3>
+
+<p>動的にメソッド定義</p>
+
+<pre><code class="language-ruby">class Hoge
+  def hoge(p1, p2)
+  end
+end
+</code></pre>
+
+<p>↑と↓は同じ</p>
+
+<pre><code class="language-ruby">class Hoge
+  define_method(:hoge) do |p1, p2|
+  end
+end
+</code></pre>
+
+<p>メソッド名を動的に定義できる</p>
+
+</section>
+<section>
+
+<h4>メソッドが見つからなかった時に動くメソッド</h4>
+
+<pre><code class="language-ruby">class Hoge
+  def method_missing(name, *args)
+    super if name == :hoge   # hogeメソッドはエラー
+    puts "#{name} が引数 #{args.inspect} で呼ばれた"
+  end
+end
+Hoge.new.fuga(1, 2, 3)
+#=&gt; fuga が引数 [1, 2, 3] で呼ばれた
+Hoge.new.hoge
+#=&gt; NoMethodError (undefined method `hoge' for #&lt;Hoge:0x000055dd5bef3b50&gt;)
+</code></pre>
+
+</section>
+<section>
+
+<h3>究極の動的実行 eval</h3>
+
+<p>文字列をRubyプログラムとしてその場で評価</p>
+
+<pre><code class="language-ruby">str = "def hoge(a, b); end"
+eval str
+</code></pre>
+
+</section>
+<section>
+
+<h2>その他</h2>
+
+</section>
+<section>
+
+<h3>文字コードまわり</h3>
+
+<ul>
+  <li>CSI - Code Set Independent
+    <ul>
+      <li>オブジェクトごとに異なる文字コード</li>
+    </ul>
+  </li>
+  <li>文字コードまわりはRuby組み込み</li>
+  <li>OSやライブラリに依存しない</li>
+  <li>Unicode 12.1 対応 (Ruby 2.6.3)</li>
+</ul>
+
+<pre><code class="language-ruby">"㋿".unicode_normalize(:nfkd)  #=&gt; "令和"
+</code></pre>
+
+</section>
+<section>
+
+<h3>楽しさ重視</h3>
+
+<blockquote>
+  <p>Rubyの言語仕様策定において最も重視しているのはストレスなくプログラミングを楽しむことである (enjoy programming)</p>
+</blockquote>
+<p><a href="https://ja.wikipedia.org/wiki/Ruby">https://ja.wikipedia.org/wiki/Ruby</a></p>
+
+</section>
+<section>
+
+<h3>「やり方はひとつじゃない」</h3>
+
+<ul>
+  <li>
+    <p>TMTOWTDI<br>
+There’s More Than One Way To Do It.</p>
+  </li>
+  <li>
+    <p>Perlのスローガン</p>
+  </li>
+  <li>
+    <p>同じことをするのに複数の方法がある</p>
+  </li>
+  <li>
+    <p>Rubyで明に言われているわけではない</p>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h3>同じ動きをする別の名前のメソッド</h3>
+
+<ul>
+  <li>Object#to_enum, #enum_for</li>
+  <li>Object#is_a?, #kind_of?</li>
+  <li>Array#push, #append</li>
+  <li>Array#length, #size</li>
+  <li>Enumerable#map - #collect</li>
+  <li>Enumerable#select - #find_all</li>
+  <li>Enumerable#reduce - #inject</li>
+  <li>などなど</li>
+</ul>
+
+</section>
+<section>
+
+<h3>好きなように書ける</h3>
+
+</section>
+<section>
+
+<h3>読みにくく書くこともできる</h3>
+
+</section>
+<section>
+
+<h3>自由度が高い</h3>
+
+<p>「自分の足を撃つ自由」</p>
+
+</section>
+<section>
+
+<h3>自由を制約したい？</h3>
+
+<p>Rubocop <a href="http://docs.rubocop.org">http://docs.rubocop.org</a></p>
+
+<p>静的チェックツール</p>
+
+<p>主にスタイルチェック</p>
+
+<p>Metrixとかセキュリティのチェックとかも</p>
+
+</section>
+<section>
+
+<h2>Ruby 3</h2>
+
+</section>
+<section>
+
+<h3>Ruby 3x3</h3>
+
+<p>「Ruby 3 は Ruby 2.0 より3倍速くする」</p>
+
+<p>RubyKaigi 2015 で Matz が宣言</p>
+
+</section>
+<section>
+
+<h3>静的型チェック</h3>
+
+<p>なにかしらの型チェック機構が入りそう</p>
+
+<p>RubyKaigi 2019 でもいくつか発表</p>
+
+</section>
+<section>
+
+<h2>Ruby 3</h2>
+
+<p>2020/12/25 リリース</p>
+
+<p>(たぶん)</p>
+
+</section>
+<section>
+
+<h1>おわり</h1>
+
+</section>
+
+  </div>
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.js"></script>
+
+
+<script>
+  (function() {
+  function extend( a, b ) {
+    for(var i in b) {
+      a[i] = b[i];
+    }
+  }
+  var baseOptions = {
+    transition: 'default',
+
+    dependencies: [
+      { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+      { src: 'plugin/zoom-js/zoom.js', async: true },
+      { src: 'plugin/notes/notes.js', async: true }
+    ]
+  };
+
+  
+    baseOptions.dependencies.push({ src: 'plugin/rabbit/rabbit.js', async: true });
+  
+
+  var configOptions = {"controls":true,"postgress":true,"slideNumber":true,"history":true,"overview":true,"enter":true,"touch":false,"loop":false,"rtl":false,"fragments":true,"autoSlide":0,"autoSlideStoppable":false,"mouseWheel":false,"transition":"default","transitionSpeed":"fast","alloted_time":1800}
+  var initializeOptions = {};
+  extend(initializeOptions, baseOptions);
+  extend(initializeOptions, configOptions);
+  Reveal.initialize(initializeOptions);
+})();
+
+</script>
+
+  </body>
+</html>

@@ -1,0 +1,483 @@
+<section>
+
+<h1>Net::SMTP</h1>
+
+<p>Nagano.rb #6</p>
+
+<p>2020-11-28</p>
+
+<p>とみたまさひろ</p>
+
+</section>
+<section>
+
+<h3>自己紹介</h3>
+
+<p><img src="images/icon2.jpg" alt="" style="position:absolute;top:0%;right:0;width:180px;border:0px"></p>
+
+<ul>
+  <li>とみたまさひろ</li>
+  <li><a href="https://twitter.com/tmtms">https://twitter.com/tmtms</a></li>
+  <li><a href="https://tmtms.hatenablog.com">https://tmtms.hatenablog.com</a></li>
+  <li><a href="https://zenn.dev/tmtms">https://zenn.dev/tmtms</a> ←投げ銭はこちら</li>
+  <li>MySQL / メール / 文字化け</li>
+  <li>富士通クラウドテクノロジーズ勤務</li>
+</ul>
+
+</section>
+<section>
+
+<h2>SMTP</h2>
+
+<p>Simple Mail Transfer Protocol</p>
+
+<p><a href="https://tools.ietf.org/html/rfc821">RFC 821</a><span style="font-size:70%">(1982)</span> → <a href="https://tools.ietf.org/html/rfc2821">2821</a><span style="font-size:70%">(2001)</span> → <a href="https://tools.ietf.org/html/rfc5321">5321</a><span style="font-size:70%">(2008)</span></p>
+
+<p>メールメッセージ形式は<br>
+<a href="https://tools.ietf.org/html/rfc822">RFC 822</a> → <a href="https://tools.ietf.org/html/rfc2822">2822</a> → <a href="https://tools.ietf.org/html/rfc5322">5322</a></p>
+
+<p>ポート番号は 25 (smtp)</p>
+
+</section>
+<section>
+
+<pre class="hljs">
+   % nc smtp.example.com 25
+<span style="color:#f88">← 220 smtp.example.com ESMTP Postfix</span>
+<span style="color:#aaf">→ EHLO client.example.net</span>
+<span style="color:#f88">← 250-smtp.example.com
+   250-PIPELINING
+   250-SIZE 102400000
+   250-VRFY
+   250-ETRN
+   250-STARTTLS
+   250-AUTH DIGEST-MD5 NTLM CRAM-MD5 PLAIN LOGIN
+   250-ENHANCEDSTATUSCODES
+   250-8BITMIME
+   250-DSN
+   250 SMTPUTF8</span>
+</pre>
+
+</section>
+<section>
+
+<pre class="hljs">
+<span style="color:#aaf">→ MAIL FROM:&lt;sender@example.com&gt;</span>
+<span style="color:#f88">← 250 2.1.0 Ok</span>
+<span style="color:#aaf">→ RCPT TO:&lt;rcpt1@example.com&gt;</span>
+<span style="color:#f88">← 250 2.1.5 Ok</span>
+<span style="color:#aaf">→ RCPT TO:&lt;rcpt2@example.com&gt;</span>
+<span style="color:#f88">← 250 2.1.5 Ok</span>
+<span style="color:#aaf">→ DATA</span>
+<span style="color:#f88">← 354 End data with &lt;CR&gt;&lt;LF&gt;.&lt;CR&gt;&lt;LF&gt;</span>
+<span style="color:#aaf">→ From: sender@example.com
+   To: rcpt1@example.com
+   Cc: rcpt2@example.com
+   Subject: test
+   
+   message body
+   .</span>
+<span style="color:#f88">← 250 2.0.0 Ok: queued as F074F9FB0E</span>
+<span style="color:#aaf">→ QUIT</span>
+<span style="color:#f88">← 221 2.0.0 Bye</span>
+</pre>
+
+</section>
+<section>
+
+<p>古き良き時代</p>
+
+<p><img src="images/mail1.png" alt=""></p>
+
+</section>
+<section>
+
+<p>迷惑メール</p>
+
+<p><img src="images/mail2.png" alt=""></p>
+
+</section>
+<section>
+
+<h3>不正中継防止</h3>
+
+<p><img src="images/mail3.png" alt=""></p>
+
+</section>
+<section>
+
+<h3>直接迷惑メールを送りつけてくるやつ対策</h3>
+
+<p>Outbound Port 25 Blocking (OP25B)</p>
+
+<p>接続元のプロバイダーが外向けの25ポートをブロック</p>
+
+<p>プロバイダーが用意したメールサーバー経由でしか<br>
+外にメールを送れない</p>
+
+<p>受信と送信(中継)の分離</p>
+
+</section>
+<section>
+
+<h3>受信(MX)</h3>
+
+<ul>
+  <li>TCP 25番ポート</li>
+  <li>自分宛のものしか受け付けない</li>
+  <li>一般ユーザーからは来ない</li>
+  <li>怪しいクライアントは拒否（設定次第）
+    <ul>
+      <li>送信者ドメインのSPFに登録されているか</li>
+      <li>IPアドレスを逆引き＆正引きして<br>
+元のIPアドレスになるか</li>
+      <li>EHLO名がDNS上に存在しているか</li>
+    </ul>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h3>送信(中継)</h3>
+
+<ul>
+  <li>TCP 587番ポート(submission)</li>
+  <li>TCP 465番ポート(smtps, submissions)</li>
+  <li>どこ宛でもOK</li>
+  <li>信頼できるクライアントからしか受け付けない
+    <ul>
+      <li>ローカルネットワークのクライアント</li>
+      <li>認証が通ったクライアント</li>
+    </ul>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h3>SMTP認証</h3>
+
+<p>メール送信時に認証が必要な場合</p>
+
+<pre class="hljs">
+<span style="color:#aaf">→ AUTH PLAIN dXNlcm5hbWUAdXNlcm5hbWUAcGFzc3dvcmQ=</span>
+<span style="color:#f88">← 235 2.7.0 Authentication successful</span>
+</pre>
+
+<p>PLAIN はユーザー名とパスワードを<br>
+Base64 しただけの平文</p>
+
+<p style="font-size:80%">CRAM-MD5 等を使えば Challenge-Response 方式の暗号化もできるけど<br>
+サーバー内に平文のパスワードを保持しておかないといけないのがイマイチ</p>
+
+</section>
+<section>
+
+<h3>通信暗号化(STARTTLS)</h3>
+
+<p>SMTP 接続後に STARTTLS 命令を発行すると<br>
+それ以降 TLS での暗号化通信になる</p>
+
+<p style="font-size:60%">(465番ポートは接続時からTLS)</p>
+
+<div style="font-size: 80%">
+<pre class="hljs">
+<span style="color:#f88">← 220 smtp.example.com ESMTP Postfix</span>
+<span style="color:#aaf">→ EHLO client.example.net</span>
+<span style="color:#f88">← 250-smtp.example.com
+   250-STARTTLS
+   ...</span>
+<span style="color:#aaf">→ STARTTLS</span>
+<span style="color:#f88">← 220 2.0.0 Ready to start TLS</span>
+--- ここから TLS 通信 ---
+<span style="color:#aaf">→ EHLO client.example.net</span>
+<span style="color:#f88">← 250-smtp.example.com</span>
+   ...
+<span style="color:#aaf">→ AUTH PLAIN dXNlcm5hbWUAdXNlcm5hbWUAcGFzc3dvcmQ=</span>
+<span style="color:#f88">← 235 2.7.0 Authentication successful</span>
+</pre>
+</div>
+
+</section>
+<section>
+
+<p>暗号化通信は手動ではできないので openssl を使う</p>
+<pre class="hljs">
+% openssl s_client -connect smtp.example.com:587 -starttls smtp
+...STARTTLS まで自動でやってくれる...
+--- ここから TLS 通信 ---
+<span style="color:#aaf">→ EHLO client.example.net</span>
+<span style="color:#f88">← 250-smtp.example.com</span>
+   ...
+</pre>
+
+</section>
+<section>
+
+<h3>TLS証明書の検証</h3>
+
+<p>オレオレ証明書とか期限切れ証明書はエラーにしたい</p>
+
+<pre class="hljs">% openssl s_client -connect smtp.example.com:587 -starttls smtp
+  <span style="color:#f88">-verify_return_error</span>
+...
+Verification error: certificate has expired
+--- 
+New, TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384
+Secure Renegotiation IS NOT supported
+Compression: NONE
+Expansion: NONE
+No ALPN negotiated
+Early data was not sent
+Verify return code: 10 (certificate has expired)
+--- 
+% 
+</pre>
+
+</section>
+<section>
+
+<h3>証明書ホスト名の検証</h3>
+
+<p>証明書が正しくても自分がアクセスしてるサーバー用の<br>
+証明書じゃないかもしれない</p>
+
+<pre class="hljs">% openssl s_client -connect smtp.example.com:587 -starttls smtp
+  -verify_return_error <span style="color:#f88">-verify_hostname smtp.example.com</span>
+</pre>
+
+<p>接続先に指定した文字列とは異なるサーバー名を<br>
+使いたいこともある(テストとかで)</p>
+
+<pre class="hljs">% openssl s_client -connect <span style="color:#f88">192.168.11.22</span>:587 -starttls smtp
+  -verify_return_error -verify_hostname <span style="color:#f88">smtp.example.com</span>
+</pre>
+
+</section>
+<section>
+
+<h2>ここから Ruby の話</h2>
+
+</section>
+<section>
+
+<h2>Net::SMTP</h2>
+
+<p>めっちゃ簡単</p>
+
+<pre><code class="language-ruby">require 'net/smtp'
+
+Net::SMTP.start('smtp.example.com', 25) do |smtp|
+  smtp.send_message(&lt;&lt;EOS, 'sender@example.com',
+                    'rcpt1@example.com', 'rcpt2@example.com')
+From: sender@example.com
+To: rcpt1@example.com
+Cc: rcpt2@example.com
+Subject: test
+
+message body
+EOS
+end
+</code></pre>
+
+</section>
+<section>
+
+<h3>SMTP認証</h3>
+
+<pre><code class="language-ruby">Net::SMTP.start('smtp.example.com', 587, 'client.example.net',
+                'username', 'password') do |smtp|
+  ...
+end
+</code></pre>
+
+<p>ユーザー名とパスワードを指定したいだけなのに<br>
+EHLO 名を書かないといけないのがイマイチ</p>
+
+<p>認証が必要なのは送信サーバーに送信するとき<br>
+その場合は EHLO 名は重要ではないはず</p>
+
+<p>デフォルトだとTLSじゃないんだけど<br>
+デフォルトの認証方式は PLAIN = 平文 😇</p>
+
+</section>
+<section>
+
+<h3>STARTTLS</h3>
+
+<p>Net::SMTP は start よりも前に<br>
+enabel_starttls が必要なのがイマイチ</p>
+
+<pre><code class="language-ruby">smtp = Net::SMTP.new('smtp.example.com', 587)
+smtp.enable_starttls
+smtp.start('client.example.com', 'username', 'password') do
+  ...
+end
+</code></pre>
+
+</section>
+<section>
+
+<h3>TLS(465番ポート)</h3>
+
+<p>enabel_starttls じゃなくて enable_tls</p>
+
+<pre><code class="language-ruby">smtp = Net::SMTP.new('smtp.example.com', 465)
+smtp.enable_tls
+smtp.start('client.example.com', 'username', 'password') do
+  ...
+end
+</code></pre>
+
+<p>enable_starttls と enable_tls 両方指定するとエラー</p>
+
+</section>
+<section>
+
+<h3>証明書の検証</h3>
+
+<p>デフォルトでは検証しない</p>
+
+<pre><code class="language-ruby">smtp = Net::SMTP.new('smtp.example.com', 587)
+context = OpenSSL::SSL::SSLContext.new
+context.set_params(verify_mode: OpenSSL::SSL::VERIFY_PEER)
+smtp.enable_starttls(context)
+smtp.start('client.example.com', 'username', 'password') do
+  ...
+end
+</code></pre>
+
+<p>かなりダメな感じになってきた…</p>
+
+</section>
+<section>
+
+<h3>証明書ホスト名の検証</h3>
+
+<p>デフォルトでは証明書の検証をしないのに<br>
+なぜかホスト名の検証だけはしてる(バグっぽい)</p>
+
+<p>Net::SMTP は常に #start() の第1引数の文字列を使うので別のサーバー名を使うことはできない</p>
+
+<pre><code class="language-ruby">smtp = Net::SMTP.new('192.168.11.22', 587)
+context = OpenSSL::SSL::SSLContext.new
+context.set_params(verify_mode: OpenSSL::SSL::VERIFY_PEER)
+smtp.enable_starttls(context)
+smtp.start('client.example.com', 'username', 'password')
+#=&gt; hostname "192.168.11.22" does not match the server
+#   certificate (OpenSSL::SSL::SSLError)
+</code></pre>
+
+</section>
+<section>
+
+<p>ということで<br>
+<a href="https://github.com/ruby/net-smtp/">https://github.com/ruby/net-smtp/</a> の<br>
+コミット権をもらった</p>
+
+<p>Net::SMTP は Ruby 2.7 から Gem になってる</p>
+
+</section>
+<section>
+
+<h3>キーワード引数化</h3>
+
+<pre><code class="language-ruby">Net::SMTP.start(hostname, port, helo_name, username, password, authtype)
+</code></pre>
+<p>↓</p>
+<pre><code class="language-ruby">Net::SMTP.start(hostname, port, helo: helo_name,
+                user: username, password: password, authtype: authtype)
+</code></pre>
+
+<p>EHLO名を指定しなくても認証情報を指定可能</p>
+
+</section>
+<section>
+
+<h3>デフォルトで STARTTLS を使用 <strong>非互換！</strong>
+</h3>
+
+<pre><code class="language-ruby">Net::SMTP.start(hostname, port) { ... }
+</code></pre>
+
+<p>サーバーが対応していれば自動的に STARTTLS を使用</p>
+
+<pre class="hljs">
+<span style="color:#aaf">→ EHLO client.example.net</span>
+<span style="color:#f88">← 250-smtp.example.com
+   250-PIPELINING
+   250-SIZE 102400000
+   250-VRFY
+   250-ETRN
+   <span style="font-weight:bold; text-decoration:underline">250-STARTTLS</span>
+   250-AUTH DIGEST-MD5 NTLM CRAM-MD5 PLAIN LOGIN
+   250-ENHANCEDSTATUSCODES
+   250-8BITMIME
+   250-DSN
+   250 SMTPUTF8</span>
+</pre>
+
+</section>
+<section>
+
+<p>STARTTLS を使用したくない場合はちょっと面倒</p>
+
+<pre><code class="language-ruby">smtp = Net::SMTP.new(hostname, port)
+smtp.disable_starttls
+smtp.start { ... }
+</code></pre>
+
+</section>
+<section>
+
+<h3>デフォルトでTLS証明書を検証 <strong>非互換！</strong>
+</h3>
+
+<p>検証したくない場合(テストとか)は<br>
+<code>tls_verify: false</code> を指定</p>
+
+<pre><code class="language-ruby">Net::SMTP.start(hostname, port, tls_verify: false) { ... }
+</code></pre>
+
+</section>
+<section>
+
+<h3>デフォルトでホスト名を検証</h3>
+
+<p>これは今までどおり</p>
+
+<p>証明書を検証しない時はホスト名も検証しない(バグ修正)</p>
+
+<p>接続用の名前と異なるホスト名で検証したい場合は<br>
+<code>tls_hostname</code> で指定</p>
+
+<pre><code class="language-ruby">Net::SMTP.start('192.168.11.22', 587, tls_hostname: 'smtp.example.com') { ... }
+</code></pre>
+
+</section>
+<section>
+
+<h3>net-smtp gem</h3>
+
+<p>Ruby 2.7 の人はこれで使える</p>
+
+<pre><code class="language-bash">% gem install net-smtp
+</code></pre>
+
+<p>正当な TLS 証明書を持ってないサーバーへの接続が<br>
+エラーになる可能性あり</p>
+
+<p>オレオレ証明書とか</p>
+
+</section>
+<section>
+
+<h3>順調にいけば Ruby 3.0 に入るかな</h3>
+
+</section>
+<section>
+
+<h2>おわり</h2>
+
+</section>

@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="en">
+  <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+    <meta charset="utf-8">
+
+<title>MySQLと令和</title>
+
+<meta name="description" content="">
+<meta name="author" content="">
+<meta name="generator" content="reveal-ck 3.9.1">
+
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+<link rel="stylesheet" href="css/reveal.css">
+<link rel="stylesheet" href="css/theme/tmtms.css" id="theme">
+
+<!-- Code syntax highlighting -->
+<link rel="stylesheet" href="lib/css/zenburn.css">
+
+<link rel="stylesheet" href="css/reveal-ck.css">
+
+<link rel="stylesheet" href="css/rabbit.css">
+<link rel="stylesheet" href="css/theme/tmtms.css">
+
+<!-- Printing and PDF exports -->
+<script>
+  var link = document.createElement( 'link' );
+  link.rel = 'stylesheet';
+  link.type = 'text/css';
+  link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+  document.getElementsByTagName( 'head' )[0].appendChild( link );
+</script>
+
+<!--[if lt IE 9]>
+<script src="lib/js/html5shiv.js"></script>
+<![endif]-->
+
+  </head>
+
+  <body>
+    <div class="reveal">
+  <!-- Any section element inside of this container is displayed as a slide -->
+  <div class="slides">
+    <section>
+
+<h1>MySQLと令和</h1>
+
+<p>とみたまさひろ</p>
+
+<p>2019-11-18</p>
+
+<p>MyNA望年LT大会2019＠赤坂</p>
+
+</section>
+<section>
+
+<h2>自己紹介</h2>
+
+<p><img src="images/icon2.jpg" alt="" style="position:absolute;top:0%;right:0;width:180px;border:0px"></p>
+
+<ul>
+  <li>とみたまさひろ</li>
+  <li><a href="https://twitter.com/tmtms">@tmtms</a></li>
+  <li>プログラマー？ 🤔</li>
+  <li>日本MySQLユーザ会</li>
+  <li>日本Rubyの会</li>
+  <li>長野ソフトウェアエンジニアグループ</li>
+  <li>富士通クラウドテクノロジーズ</li>
+  <li><a href="https://tmtm.github.io/mysql-params/?vers=8.0.11,8.0.17&amp;diff=true">https://tmtm.github.io/mysql-params/</a></li>
+  <li><a href="https://tmtm.github.io/postfix-params/?vers=3.0.15,3.1.13,3.2.10,3.3.5,3.4.6&amp;diff=true">https://tmtm.github.io/postfix-params/</a></li>
+</ul>
+
+</section>
+<section>
+
+<h1>㊗令和元年🎉</h1>
+
+</section>
+<section>
+
+<h2>今日は「令和」の話をします</h2>
+
+</section>
+<section>
+
+<h2>その1</h2>
+
+<h2>「令和」と言えば…</h2>
+
+</section>
+<section>
+
+<h2>似てるけど違う文字</h2>
+
+<h2>「令」と「令」</h2>
+
+</section>
+<section>
+
+<h3>同じに見えるけど別の文字</h3>
+
+<ul>
+  <li>「令」 U+4EE4 CJK UNIFIED IDEOGRAPH</li>
+  <li>「令」 U+F9A8 CJK COMPATIBILITY IDEOGRAPH</li>
+</ul>
+
+<p><strong>困る！</strong></p>
+
+</section>
+<section>
+
+<h3>MySQLでは</h3>
+
+<pre style="font-size: 60%"><code class="language-sql">mysql&gt; set @a='令和', @b='令和';
+mysql&gt; select @a, @b, hex(@a), hex(@b);
++--------+--------+--------------+--------------+
+| @a     | @b     | hex(@a)      | hex(@b)      |
++--------+--------+--------------+--------------+
+| 令和   | 令和   | E4BBA4E5928C | EFA6A8E5928C |
++--------+--------+--------------+--------------+
+mysql&gt; select @a=@b;
++-------+
+| @a=@b |
++-------+
+|     1 | ← ❗❗
++-------+
+</code></pre>
+
+<p><strong>一致</strong></p>
+
+</section>
+<section>
+
+<p style="font-size: 500%">😊</p>
+
+</section>
+<section>
+
+<h2>その2</h2>
+<h2>「令和」と言えば…</h2>
+
+</section>
+<section>
+
+<h2>異体字</h2>
+
+<h2>「<span style="font-family:IPAmjMincho">令󠄁</span>」と「<span style="font-family:IPAmjMincho">令󠄂</span>」</h2>
+
+</section>
+<section>
+
+<h3>違う字形だけど同じ文字</h3>
+
+<p>異体字セレクタ</p>
+
+<ul>
+  <li>「<span style="font-family:IPAmjMincho">令</span>」 U+4EE4</li>
+  <li>「<span style="font-family:IPAmjMincho">令󠄁</span>」 U+4EE4 U+E0101</li>
+  <li>「<span style="font-family:IPAmjMincho">令󠄂</span>」 U+4EE4 U+E0102</li>
+</ul>
+
+<p><strong>困る！</strong></p>
+
+</section>
+<section>
+
+<h3>MySQLでは</h3>
+
+<pre style="font-size: 60%"><code class="language-sql">mysql&gt; set @a='令和', @b='令󠄁和', @c='令󠄂和';
+mysql&gt; select hex(@a), hex(@b), hex(@c)\G
+*************************** 1. row ***************************
+hex(@a): E4BBA4E5928C
+hex(@b): E4BBA4F3A08481E5928C
+hex(@c): E4BBA4F3A08482E5928C
+mysql&gt; select @a=@b, @b=@c;
++-------+-------+
+| @a=@b | @b=@c |
++-------+-------+
+|     1 |     1 | ← ❗❗
++-------+-------+
+</code></pre>
+
+<p style="font-size:60%; color:#888">※都合により同じ字体に見えてます</p>
+
+<p><strong>一致</strong></p>
+
+</section>
+<section>
+
+<p style="font-size: 500%">😊</p>
+
+</section>
+<section>
+
+<h2>その3</h2>
+<h2>「令和」と言えば…</h2>
+
+</section>
+<section>
+
+<h2>元号</h2>
+
+</section>
+<section>
+
+<h2>元号と言えば…</h2>
+
+</section>
+<section>
+
+<h2>合字</h2>
+
+<table style="font-family:IPAexGothic">
+  <tbody>
+    <tr>
+      <td>明治(U+660E U+6CBB)</td>
+      <td>㍾(U+337E)</td>
+    </tr>
+    <tr>
+      <td>大正(U+5927 U+6B63)</td>
+      <td>㍽(U+337D)</td>
+    </tr>
+    <tr>
+      <td>昭和(U+662D U+548C)</td>
+      <td>㍼(U+337C)</td>
+    </tr>
+    <tr>
+      <td>平成(U+5E73 U+6210)</td>
+      <td>㍻(U+337B)</td>
+    </tr>
+    <tr>
+      <td>令和(U+4EE4 U+548C)</td>
+      <td>㋿(U+32FF)</td>
+    </tr>
+  </tbody>
+</table>
+
+</section>
+<section>
+
+<h3>MySQLでは</h3>
+
+<pre style="font-size: 60%"><code class="language-sql">mysql&gt; select '明治'='㍾', '大正'='㍽', '昭和'='㍼',
+    -&gt; '平成'='㍻', '令和'='㋿'\G
+*************************** 1. row ***************************
+'明治'='㍾': 1   ← 一致❗
+'大正'='㍽': 1   ← 一致❗
+'昭和'='㍼': 1   ← 一致❗
+'平成'='㍻': 1   ← 一致❗
+'令和'='㋿': 0   ← 不一致❗
+</code></pre>
+
+</section>
+<section>
+
+<p style="font-size: 500%">😇</p>
+
+</section>
+<section>
+
+<h2>なにが起きてるのか？</h2>
+
+</section>
+<section>
+
+<h2>MySQL は Unicode 9.0.0 準拠</h2>
+
+</section>
+<section>
+
+<h2>Unicodeの照合順序</h2>
+
+<p>Unicode Collation Algorithm (UCA)<br>
+<a href="https://unicode.org/reports/tr10/tr10-34.html" style="font-size:80%">https://unicode.org/reports/tr10/tr10-34.html</a></p>
+
+<p>Default Unicode Collation Element Table (DUCET)<br>
+<a href="https://www.unicode.org/Public/UCA/9.0.0/allkeys.txt" style="font-size:80%">https://www.unicode.org/Public/UCA/9.0.0/allkeys.txt</a></p>
+
+<p>文字毎にWeightという値が定義されている<br>
+Weightが等しいなら等しい文字</p>
+
+</section>
+<section>
+
+<h2>その1</h2>
+
+<h2>似てるけど違う文字</h2>
+
+<h2>「令」と「令」</h2>
+
+</section>
+<section>
+
+<ul>
+  <li>「令」 U+4EE4 CJK UNIFIED IDEOGRAPH<br>
+DUCETには無いけど計算で求まる
+    <pre><code>[.FB40.0020.0002][.(CP | 0x8000).0000.0000]
+→ [.FB40.0020.0002][.CEE4.0000.0000]
+</code></pre>
+  </li>
+  <li>「令」 U+F9A8 CJK COMPATIBILITY IDEOGRAPH<br>
+DUCETにある
+    <pre><code>F9A8  ; [.FB40.0020.0002][.CEE4.0000.0000]
+</code></pre>
+  </li>
+</ul>
+
+<p>Weightが一致するから等しい</p>
+
+</section>
+<section>
+
+<h2>その2</h2>
+
+<h2>異体字</h2>
+
+<h2>「<span style="font-family:IPAmjMincho">令󠄁</span>」と「<span style="font-family:IPAmjMincho">令󠄂</span>」</h2>
+
+</section>
+<section>
+
+<p>異体字セレクタ</p>
+
+<ul>
+  <li>「<span style="font-family:IPAmjMincho">令</span>」 U+4EE4</li>
+  <li>「<span style="font-family:IPAmjMincho">令󠄁</span>」 U+4EE4 U+E0101</li>
+  <li>「<span style="font-family:IPAmjMincho">令󠄂</span>」 U+4EE4 U+E0102</li>
+</ul>
+
+<p>異体字セレクタはDUCETにある</p>
+
+<pre><code>E0101 ; [.0000.0000.0000] # VARIATION SELECTOR-18
+E0102 ; [.0000.0000.0000] # VARIATION SELECTOR-19
+</code></pre>
+
+<p>UCAではすべてゼロの文字は無視</p>
+
+</section>
+<section>
+
+<h2>その3</h2>
+
+<h2>合字</h2>
+
+<p style="font-family:IPAexGothic">㍾ / ㍽ / ㍼ / ㍻ / ㋿</p>
+
+</section>
+<section>
+
+<h3>平成=㍻</h3>
+
+<ul>
+  <li>平成(U+5E73 U+6210): ㍻(U+337B)</li>
+</ul>
+
+<pre style="font-size: 60%"><code>平成 [.FB40.0020.0002][.DE73.0000.0000][.FB40.0020.0002][.E210.0000.0000]
+㍻   [.FB40.0020.001C][.DE73.0000.0000][.FB40.0020.001C][.E210.0000.0000]
+</code></pre>
+
+<p>ちょっと違う… 🤔</p>
+
+</section>
+<section>
+
+<h3>utf8mb4_0900_ai_ci</h3>
+
+<p>MySQLのデフォルトのCollation</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>要素</th>
+      <th>意味</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>utf8mb4</td>
+      <td>4バイトUTF-8</td>
+    </tr>
+    <tr>
+      <td>0900</td>
+      <td>Unicode 9.0.0</td>
+    </tr>
+    <tr>
+      <td>ai</td>
+      <td>アクセントの違いを無視</td>
+    </tr>
+    <tr>
+      <td>ci</td>
+      <td>大文字小文字の違いを無視</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><code>ci</code>の場合はWeightの3番目を無視</p>
+
+</section>
+<section>
+
+<p><code>ci</code>の場合はWeightの3番目を無視</p>
+
+<pre style="font-size: 60%"><code>平成 [.FB40.0020.0002][.DE73.0000.0000][.FB40.0020.0002][.E210.0000.0000]
+㍻   [.FB40.0020.001C][.DE73.0000.0000][.FB40.0020.001C][.E210.0000.0000]
+</code></pre>
+
+<p>3番目を無視すると</p>
+
+<pre style="font-size: 60%"><code>平成 [.FB40.0020.    ][.DE73.0000.    ][.FB40.0020.    ][.E210.0000.    ]
+㍻   [.FB40.0020.    ][.DE73.0000.    ][.FB40.0020.    ][.E210.0000.    ]
+</code></pre>
+
+<p>一致</p>
+
+</section>
+<section>
+
+<h3 style="font-family:IPAexGothic">令和≠㋿</h3>
+
+<p style="font-family:IPAexGothic">そもそも「㋿」がDUCETに無い！</p>
+
+</section>
+<section>
+
+<p style="font-family:IPAexGothic">「㋿」はUnicode 9.0.0 に無い！</p>
+
+</section>
+<section>
+
+<p style="font-family:IPAexGothic">「㋿」はUnicode 12.1.0 で追加</p>
+
+<p><a href="http://unicode.org/versions/Unicode12.1.0/" style="font-size:80%">http://unicode.org/versions/Unicode12.1.0/</a></p>
+
+<p style="font-family:IPAexGothic">12.1 は「㋿」のためだけに 5/7 にリリース</p>
+
+<blockquote style="font-size: 50%; text-align: left; background-color: #eee">
+  <p>Unicode 12.1 adds exactly one character, for a total of 137,929 characters.<br>
+The new character added to Version 12.1 is:<br>
+    U+32FF SQUARE ERA NAME REIWA<br>
+Version 12.1 adds that single character to enable software to be<br>
+rapidly updated to support the new Japanese era name in calendrical<br>
+systems and date formatting. The new Japanese era name was officially<br>
+announced on April 1, 2019, and is effective as of May 1, 2019.</p>
+</blockquote>
+
+</section>
+<section>
+
+<h2>MySQL独自の変な挙動じゃなくてUnicodeの規則だった！</h2>
+
+</section>
+<section>
+
+<h2>Unicode規則にちゃんと従ってるMySQLえらい！</h2>
+
+</section>
+<section>
+
+<h2>Collationについて学べる「令和」すごい！</h2>
+
+</section>
+<section>
+
+<h1>おまけ</h1>
+
+</section>
+<section>
+
+<h2>日本語Collation</h2>
+
+</section>
+<section>
+
+<h3>utf8mb4_<strong>ja</strong>_0900_as_cs</h3>
+<h3>utf8mb4_<strong>ja</strong>_0900_as_cs_<strong>ks</strong>
+</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>要素</th>
+      <th>意味</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>utf8mb4</td>
+      <td>4バイトUTF-8</td>
+    </tr>
+    <tr>
+      <td><strong>ja</strong></td>
+      <td>言語</td>
+    </tr>
+    <tr>
+      <td>0900</td>
+      <td>Unicode 9.0.0</td>
+    </tr>
+    <tr>
+      <td>as</td>
+      <td>アクセント違いは別の文字</td>
+    </tr>
+    <tr>
+      <td>cs</td>
+      <td>大文字小文字は別の文字</td>
+    </tr>
+    <tr>
+      <td><strong>ks</strong></td>
+      <td>平仮名と片仮名は別の文字</td>
+    </tr>
+  </tbody>
+</table>
+
+</section>
+<section>
+
+<h3>JIS規則のCollation</h3>
+
+</section>
+<section>
+
+<table style="font-size: 80%">
+  <thead>
+    <tr>
+      <th>比較</th>
+      <th>ai_ci</th>
+      <th>as_ci</th>
+      <th>as_cs</th>
+      <th>
+<strong>ja</strong> as_cs</th>
+      <th>
+<strong>ja</strong> as_cs_<strong>ks</strong>
+</th>
+      <th>bin</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+<code>A</code>=<code>a</code>
+</td>
+      <td>◯</td>
+      <td>◯</td>
+      <td>×</td>
+      <td>×</td>
+      <td>×</td>
+      <td>×</td>
+    </tr>
+    <tr>
+      <td>
+<code>A</code>=<code>Ａ</code>
+</td>
+      <td>◯</td>
+      <td>◯</td>
+      <td>×</td>
+      <td>◯</td>
+      <td>◯</td>
+      <td>×</td>
+    </tr>
+    <tr>
+      <td>
+<code>Ａ</code>=<code>ａ</code>
+</td>
+      <td>◯</td>
+      <td>◯</td>
+      <td>×</td>
+      <td>×</td>
+      <td>×</td>
+      <td>×</td>
+    </tr>
+    <tr>
+      <td>
+<code>あ</code>=<code>ぁ</code>
+</td>
+      <td>◯</td>
+      <td>◯</td>
+      <td>×</td>
+      <td>×</td>
+      <td>×</td>
+      <td>×</td>
+    </tr>
+    <tr>
+      <td>
+<code>あ</code>=<code>ア</code>
+</td>
+      <td>◯</td>
+      <td>◯</td>
+      <td>×</td>
+      <td>◯</td>
+      <td>×</td>
+      <td>×</td>
+    </tr>
+    <tr>
+      <td>
+<code>は</code>=<code>ば</code>=<code>ぱ</code>
+</td>
+      <td>◯</td>
+      <td>×</td>
+      <td>×</td>
+      <td>×</td>
+      <td>×</td>
+      <td>×</td>
+    </tr>
+    <tr>
+      <td>
+<code>1</code>=<code>①</code>
+</td>
+      <td>◯</td>
+      <td>◯</td>
+      <td>×</td>
+      <td>×</td>
+      <td>×</td>
+      <td>×</td>
+    </tr>
+    <tr>
+      <td>
+<code>令</code>=<code>令</code>
+</td>
+      <td>◯</td>
+      <td>◯</td>
+      <td>◯</td>
+      <td>×</td>
+      <td>×</td>
+      <td>×</td>
+    </tr>
+    <tr>
+      <td>
+<code>令</code>=<code><span style="font-family:IPAmjMincho">令󠄂</span></code>
+</td>
+      <td>◯</td>
+      <td>◯</td>
+      <td>◯</td>
+      <td>◯</td>
+      <td>◯</td>
+      <td>×</td>
+    </tr>
+    <tr>
+      <td>
+<code>平成</code>=<code>㍻</code>
+</td>
+      <td>◯</td>
+      <td>◯</td>
+      <td>×</td>
+      <td>×</td>
+      <td>×</td>
+      <td>×</td>
+    </tr>
+  </tbody>
+</table>
+
+</section>
+<section>
+
+<h3>ソート順もJIS</h3>
+
+<pre><code class="language-sql">mysql&gt; select c,hex(c) from t order by c;
++------+--------+
+| c    | hex(c) |
++------+--------+
+| 亜   | E4BA9C |
+| 伊   | E4BC8A |
+| 宇   | E5AE87 |
+| 栄   | E6A084 |
+| 奥   | E5A5A5 |
++------+--------+
+</code></pre>
+
+</section>
+<section>
+
+<h4>長音記号のソート順は前の文字の母音と同じ</h4>
+
+<pre><code class="language-sql">mysql&gt; select c from t2 order by c;
++--------+
+| c      |
++--------+
+| かー   |
+| かあ   |
+| かい   |
+| きあ   |
+| きー   |
+| きい   |
+| くあ   |
+| くい   |
+| くー   |
++--------+
+</code></pre>
+
+</section>
+<section>
+
+<h3>業界によってはうれしいかも</h3>
+
+<h3 class="fragment fade-in">ちょっとやりすぎ感？</h3>
+
+<h3 class="fragment fade-in">文句はJISに</h3>
+
+</section>
+<section>
+
+<h1>おまけ２</h1>
+
+</section>
+<section>
+
+<h2>utf8mb4_0900_bin</h2>
+
+<p>MySQL 8.0.17 から登場</p>
+
+</section>
+<section>
+
+<h3>CollationのPAD属性</h3>
+
+<ul>
+  <li>8.0 から追加</li>
+  <li>
+<code>PAD SPACE</code> - 末尾空白文字の有無を無視する
+    <ul>
+      <li>5.7までの振る舞い</li>
+    </ul>
+  </li>
+  <li>
+<code>NO PAD</code> - 末尾空白文字の有無を無視しない
+    <ul>
+      <li>8.0からの新しいCollation</li>
+      <li><code>utf8mb4_*0900_*</code></li>
+    </ul>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h3>PAD SPACE と NO PAD</h3>
+
+<pre><code class="language-sql">mysql&gt; set names utf8mb4 collate utf8mb4_unicode_520_ci;
+mysql&gt; select 'a' = 'a   ';
++--------------+
+| 'a' = 'a   ' |
++--------------+
+|            1 |
++--------------+
+
+mysql&gt; set names utf8mb4 collate utf8mb4_0900_ai_ci;
+mysql&gt; select 'a' = 'a   ';
++--------------+
+| 'a' = 'a   ' |
++--------------+
+|            0 |
++--------------+
+</code></pre>
+
+</section>
+<section>
+
+<h3>utf8mb4_0900_bin</h3>
+
+<ul>
+  <li>utf8mb4_bin にも <code>NO PAD</code> バージョンが欲しい</li>
+  <li>互換のために utf8mb4_bin は変更できない</li>
+  <li>utf8mb4_0900_bin 新設</li>
+</ul>
+
+</section>
+<section>
+
+<h3>utf8mb4_bin と utf8mb4_0900_bin</h3>
+
+<pre><code class="language-sql">mysql&gt; set names utf8mb4 collate utf8mb4_bin;
+mysql&gt; select 'a' = 'a   ';
++--------------+
+| 'a' = 'a   ' |
++--------------+
+|            1 |
++--------------+
+
+mysql&gt; set names utf8mb4 collate utf8mb4_0900_bin;
+mysql&gt; select 'a' = 'a   ';
++--------------+
+| 'a' = 'a   ' |
++--------------+
+|            0 |
++--------------+
+</code></pre>
+
+</section>
+<section>
+
+<h3>名前がイマイチな気がする 🤔</h3>
+
+<ul>
+  <li>
+<code>0900</code> は Unicode 9.0.0 準拠のCollationという意味</li>
+  <li>
+<code>utf8mb4_0900_bin</code> は Unicode 準拠じゃない</li>
+  <li>
+<code>NO PAD</code>なCollationは<code>0900</code>だけだからこうなった？</li>
+  <li>それにしてもなー</li>
+</ul>
+
+</section>
+<section>
+
+<h2>まとめ</h2>
+
+<h3 class="fragment fade-in">適切なCollationを選ぼう！</h3>
+
+<h3 class="fragment fade-in">Collation多すぎ？</h3>
+
+<h3 class="fragment fade-in">実は全ての文字を区別できる utf8mb4_0900_bin でよかったり？<br>たぶん速いし</h3>
+
+</section>
+
+  </div>
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.js"></script>
+
+
+<script>
+  (function() {
+  function extend( a, b ) {
+    for(var i in b) {
+      a[i] = b[i];
+    }
+  }
+  var baseOptions = {
+    transition: 'default',
+
+    dependencies: [
+      { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+      { src: 'plugin/zoom-js/zoom.js', async: true },
+      { src: 'plugin/notes/notes.js', async: true }
+    ]
+  };
+
+  
+    baseOptions.dependencies.push({ src: 'plugin/rabbit/rabbit.js', async: true });
+  
+
+  var configOptions = {"controls":true,"postgress":true,"slideNumber":true,"history":true,"overview":true,"enter":true,"touch":false,"loop":false,"rtl":false,"fragments":true,"autoSlide":0,"autoSlideStoppable":false,"mouseWheel":false,"transition":"default","transitionSpeed":"fast","alloted_time":300}
+  var initializeOptions = {};
+  extend(initializeOptions, baseOptions);
+  extend(initializeOptions, configOptions);
+  Reveal.initialize(initializeOptions);
+})();
+
+</script>
+
+  </body>
+</html>

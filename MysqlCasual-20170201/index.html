@@ -1,0 +1,988 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+<title>MySQLの文字コード事情</title>
+
+<meta name="description" content="">
+<meta name="author" content="">
+<meta name="generator" content="reveal-ck 3.4.0">
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+<link rel="stylesheet" href="css/reveal.css">
+<link rel="stylesheet" href="css/theme/tmtms.css" id="theme">
+
+<!-- Code syntax highlighting -->
+<link rel="stylesheet" href="lib/css/zenburn.css">
+
+<link rel="stylesheet" href="css/reveal-ck.css">
+
+
+<!-- Printing and PDF exports -->
+<script>
+  var link = document.createElement( 'link' );
+  link.rel = 'stylesheet';
+  link.type = 'text/css';
+  link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+  document.getElementsByTagName( 'head' )[0].appendChild( link );
+</script>
+
+<!--[if lt IE 9]>
+<script src="lib/js/html5shiv.js"></script>
+<![endif]-->
+
+  </head>
+
+  <body>
+    <div class="reveal">
+  <!-- Any section element inside of this container is displayed as a slide -->
+  <div class="slides">
+    <section>
+
+<h1>MySQLの文字コード事情</h1>
+
+<h3>2017版</h3>
+
+<p>MySQL Casual Vol.10</p>
+
+<p>2017/02/01</p>
+
+<p>とみたまさひろ</p>
+
+</section>
+<section>
+
+<h1>MySQL Casual こわい</h1>
+
+<p><img src="a.png" alt="" style="width: 600px;"><br>
+<img src="b.png" alt="" style="width: 600px;"><br>
+<img src="c.png" alt="" style="width: 600px;"></p>
+
+</section>
+<section>
+
+<h1>自己紹介</h1>
+
+<ul>
+  <li>とみた まさひろ
+    <ul>
+      <li><a href="http://tmtms.hatenablog.com">http://tmtms.hatenablog.com</a></li>
+      <li><a href="http://twitter.com/tmtms">http://twitter.com/tmtms</a></li>
+      <li><a href="https://github.com/tmtm">https://github.com/tmtm</a></li>
+    </ul>
+  </li>
+  <li>長野県北部在住プログラマー</li>
+  <li>好きなプログラミング言語 Ruby</li>
+  <li>Ruby/MySQLライブラリ</li>
+</ul>
+
+</section>
+<section>
+
+<h1>最近の活動</h1>
+
+<ul>
+  <li>Software Design 2016年6月号
+    <ul>
+      <li>「MySQLでデータベースを作ってみよう！」</li>
+    </ul>
+  </li>
+  <li>Software Design 2016年9月号
+    <ul>
+      <li>「MySQL 4つのログの使いどころ」</li>
+    </ul>
+  </li>
+  <li>Software Design 2016年12月号
+    <ul>
+      <li>「Rubyと文字コード」</li>
+      <li>「MySQLと文字コード」</li>
+    </ul>
+  </li>
+  <li>mysql.gr.jp ドメイン料支払い</li>
+</ul>
+
+</section>
+<section>
+
+<h1>MySQLに対する興味分野</h1>
+
+<h2>プロトコル</h2>
+
+<p>X Protocol とか</p>
+
+<h2>文字コード</h2>
+
+</section>
+<section>
+
+<h1>今回は文字コード</h1>
+
+</section>
+<section>
+
+<h1>MySQLで文字コードというと Character set(Charset)</h1>
+
+</section>
+<section>
+
+<h1>Character set ?</h1>
+
+</section>
+<section>
+
+<h1>語源的には文字集合</h1>
+
+</section>
+<section>
+
+<h1>文字集合</h1>
+
+<dl>
+  <dt>US-ASCII</dt>
+  <dd>数字、英字、32個の記号</dd>
+  <dt>JIS X 0201</dt>
+  <dd>US-ASCII(「\」→「¥」/「~」→「‾」)+カタカナ</dd>
+  <dt>JIS X 0208</dt>
+  <dd>数字、ひらがな、カタカナ、漢字、ラテン文字、ギリシャ文字、記号等々</dd>
+  <dt>JIS X 0213</dt>
+  <dd>JIS X 0208 + 第三水準/第四水準、ローマ数字、鼻濁音文字等々</dd>
+</dl>
+
+</section>
+<section>
+
+<h1>文字集合</h1>
+
+<dl>
+  <dt>Windows-31J</dt>
+  <dd>JIS X 0201 + JIS X 0208 + NEC特殊文字 + IBM拡張文字(「⑧」「Ⅷ」「㈱」「髙」「﨑」「彅」等)</dd>
+  <dt>Unicode</dt>
+  <dd>世界中の文字。絵文字(「🍺」「🍣」等)も含む。</dd>
+</dl>
+
+</section>
+<section>
+
+<h1>あれ？<br>「CP932」とか「UTF-8」は？</h1>
+
+</section>
+<section>
+
+<h1>エンコーディング</h1>
+
+<h2>文字符号化方式</h2>
+
+<p>文字集合の文字をコンピュータで利用できるバイト列に変換する方式</p>
+
+</section>
+<section>
+
+<h1>エンコーディング</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Encoding</th>
+      <th>文字集合</th>
+      <th>用途</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ISO-2022-JP</td>
+      <td>US-ASCII, JIS X 0201(ラテン文字), JIS X 0208</td>
+      <td>メール</td>
+    </tr>
+    <tr>
+      <td>EUC-JP</td>
+      <td>US-ASCII, JIS X 0201(カナ文字),<br>JIS X 0208, JIS X 0212</td>
+      <td>昔のUNIX</td>
+    </tr>
+    <tr>
+      <td>SHIFT_JIS</td>
+      <td>JIS X 0201, JIS X 0208</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>Windows-31J<br><em>CP932</em>
+</td>
+      <td>Windows-31J</td>
+      <td>Windows</td>
+    </tr>
+  </tbody>
+</table>
+
+</section>
+<section>
+
+<h1>エンコーディング</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Encoding</th>
+      <th>文字集合</th>
+      <th>1文字のサイズ</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><em>UTF-8</em></td>
+      <td>Unicode</td>
+      <td>1〜4バイト</td>
+    </tr>
+    <tr>
+      <td>UTF-16</td>
+      <td>Unicode</td>
+      <td>2バイト</td>
+    </tr>
+    <tr>
+      <td>UTF-32</td>
+      <td>Unicode</td>
+      <td>4バイト</td>
+    </tr>
+  </tbody>
+</table>
+
+</section>
+<section>
+
+<h1>Charset ≒ エンコーディング</h1>
+
+<h2>(MySQLに限らない)</h2>
+
+</section>
+<section>
+
+<h1>MySQLのCharset</h1>
+
+<pre><code class="language-sql">mysql&gt; SHOW CHARACTER SET;
++----------+---------------------------------+---------------------+--------+
+| Charset  | Description                     | Default collation   | Maxlen |
++----------+---------------------------------+---------------------+--------+
+| big5     | Big5 Traditional Chinese        | big5_chinese_ci     |      2 |
+| dec8     | DEC West European               | dec8_swedish_ci     |      1 |
+| cp850    | DOS West European               | cp850_general_ci    |      1 |
+| hp8      | HP West European                | hp8_english_ci      |      1 |
+| koi8r    | KOI8-R Relcom Russian           | koi8r_general_ci    |      1 |
+| latin1   | cp1252 West European            | latin1_swedish_ci   |      1 |
+| latin2   | ISO 8859-2 Central European     | latin2_general_ci   |      1 |
+| swe7     | 7bit Swedish                    | swe7_swedish_ci     |      1 |
+| ascii    | US ASCII                        | ascii_general_ci    |      1 |
+| ujis     | EUC-JP Japanese                 | ujis_japanese_ci    |      3 |
+| sjis     | Shift-JIS Japanese              | sjis_japanese_ci    |      2 |
+| hebrew   | ISO 8859-8 Hebrew               | hebrew_general_ci   |      1 |
+| tis620   | TIS620 Thai                     | tis620_thai_ci      |      1 |
+| euckr    | EUC-KR Korean                   | euckr_korean_ci     |      2 |
+</code></pre>
+
+</section>
+<section>
+
+<h1>日本語が使えてASCII互換のは ujis, sjis, eucjpms, cp932, utf8, utf8mb4</h1>
+
+</section>
+<section>
+
+<h1>MySQL Charset</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>charset</th>
+      <th>文字集合</th>
+      <th>エンコーディング</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ujis</td>
+      <td>JIS X 0201 + 0208</td>
+      <td>EUC-JP</td>
+    </tr>
+    <tr>
+      <td>sjis</td>
+      <td>JIS X 0201 + 0208</td>
+      <td>SHIFT_JIS</td>
+    </tr>
+    <tr>
+      <td>eucjpms</td>
+      <td>Windows-31J</td>
+      <td>EUC-JP風</td>
+    </tr>
+    <tr>
+      <td>cp932</td>
+      <td>Windows-31J</td>
+      <td>Windows-31J</td>
+    </tr>
+    <tr>
+      <td>utf8</td>
+      <td>Unicode</td>
+      <td>UTF-8</td>
+    </tr>
+    <tr>
+      <td>utf8mb4</td>
+      <td>Unicode</td>
+      <td>UTF-8</td>
+    </tr>
+  </tbody>
+</table>
+
+</section>
+<section>
+
+<h1>今なら普通はUnicode</h1>
+
+<ul>
+  <li>世界中のほぼすべての文字を扱える</li>
+  <li>絵文字も使える</li>
+  <li>世の中もう普通にユニコード</li>
+  <li>文字コード変換とか考えなくていい</li>
+  <li>文字化けしない</li>
+</ul>
+
+</section>
+<section>
+
+<h1>utf8 ? utf8mb4 ?</h1>
+
+</section>
+<section>
+
+<h1>utf8 と utf8mb4</h1>
+
+<ul>
+  <li>utf8: 1文字 1〜3バイト (U+0000〜U+FFFF)<br>
+utf8mb3 という別名あり</li>
+  <li>utf8mb4: 1文字 1〜4バイト(U+0000〜U+1FFFFF)</li>
+  <li>
+<em>UTF-8 は普通1〜4バイト</em><br>
+<em>utf8 / utf8mb4 の違いは MySQL のみ</em>
+</li>
+  <li>ほとんどの日本語文字は3バイト</li>
+  <li>一部の漢字と絵文字等が4バイト</li>
+</ul>
+
+</section>
+<section>
+
+<h1>4バイトになる JIS X 0213 の文字</h1>
+
+<div style="font-size: 90%">𠀋𡈽𡌛𡑮𡢽𠮟𡚴𡸴𣇄𣗄𣜿𣝣𣳾𤟱𥒎𥔎𥝱𥧄𥶡𦫿𦹀𧃴𧚄𨉷𨏍𪆐𠂉𠂢𠂤𠆢𠈓𠌫𠎁𠍱𠏹𠑊𠔉𠗖𠘨𠝏𠠇𠠺𠢹𠥼𠦝𠫓𠬝𠵅𠷡𠺕𠹭𠹤𠽟𡈁𡉕𡉻𡉴𡋤𡋗𡋽𡌶𡍄𡏄𡑭𡗗𦰩𡙇𡜆𡝂𡧃𡱖𡴭𡵅𡵸𡵢𡶡𡶜𡶒𡶷𡷠𡸳𡼞𡽶𡿺𢅻𢌞𢎭𢛳𢡛𢢫𢦏𢪸𢭏𢭐𢭆𢰝𢮦𢰤𢷡𣇃𣇵𣆶𣍲𣏓𣏒𣏐𣏤𣏕𣏚𣏟𣑊𣑑𣑋𣑥𣓤𣕚𣖔𣘹𣙇𣘸𣘺𣜜𣜌𣝤𣟿𣟧𣠤𣠽𣪘𣱿𣴀𣵀𣷺𣷹𣷓𣽾𤂖𤄃𤇆𤇾𤎼𤘩𤚥𤢖𤩍𤭖𤭯𤰖𤴔𤸎𤸷𤹪𤺋𥁊𥁕𥄢𥆩𥇥𥇍𥈞𥉌𥐮𥓙𥖧𥞩𥞴𥧔𥫤𥫣𥫱𥮲𥱋𥱤𥸮𥹖𥹥𥹢𥻘𥻂𥻨𥼣𥽜𥿠𥿔𦀌𥿻𦀗𦁠𦃭𦉰𦊆𦍌𣴎𦐂𦙾𦚰𦜝𦣝𦣪𦥑𦥯𦧝𦨞𦩘𦪌𦪷𦱳𦳝𦹥𦾔𦿸𦿶𦿷𧄍𧄹𧏛𧏚𧏾𧐐𧑉𧘕𧘔𧘱𧚓𧜎𧜣𧝒𧦅𧪄𧮳𧮾𧯇𧲸𧶠𧸐𧾷𨂊𨂻𨊂𨋳𨐌𨑕𨕫𨗈𨗉𨛗𨛺𨥉𨥆𨥫𨦇𨦈𨦺𨦻𨨞𨨩𨩱𨩃𨪙𨫍𨫤𨫝𨯁𨯯𨴐𨵱𨷻𨸟𨸶𨺉𨻫𨼲𨿸𩊠𩊱𩒐𩗏𩙿𩛰𩜙𩝐𩣆𩩲𩷛<span title="ほっけ" style="color: red">𩸽</span>𩸕𩺊𩹉𩻄𩻩𩻛𩿎𪀯𪀚𪃹𪂂𢈘𪎌𪐷𪗱𪘂𪘚𪚲</div>
+
+</section>
+<section>
+
+<h1>4バイトになる絵文字(一部)</h1>
+
+<div style="font-size:80%">😀😁😂😃😄😅😆😇😈😉😊😋😌😍😎😏😐😑😒😓😔😕😖😗😘😙😚😛😜😝😞😟😠😡😢😣😤😥😦😧😨😩😪😫😬😭😮😯😰😱😲😳😴😵😶😷😸😹😺😻😼😽😾😿🙀🙁🙂🙃🙄🙅🙆🙇🙈🙉🙊🙋🙌🙍🙎🙏🌀🌁🌂🌃🌄🌅🌆🌇🌈🌉🌊🌋🌌🌍🌎🌏🌐🌑🌒🌓🌔🌕🌖🌗🌘🌙🌚🌛🌜🌝🌞🌟🌠🌡🌤🌥🌦🌧🌨🌩🌪🌫🌬🌭🌮🌯🌰🌱🌲🌳🌴🌵🌶🌷🌸🌹🌺🌻🌼🌽🌾🌿🍀🍁🍂🍃🍄🍅🍆🍇🍈🍉🍊🍋🍌🍍🍎🍏🍐🍑🍒🍓🍔🍕🍖🍗🍘🍙🍚🍛🍜🍝🍞🍟🍠🍡🍢🍣🍤🍥🍦🍧🍨🍩🍪🍫🍬🍭🍮🍯🍰🍱🍲🍳🍴🍵🍶🍷🍸🍹🍺🍻🍼🍽🍾🍿🎀🎁🎂🎃🎄🎅🎆🎇🎈🎉🎊🎋🎌🎍🎎🎏🎐🎑🎒🎓🎖🎗🎙🎚🎛🎞🎟🎠🎡🎢🎣🎤🎥🎦🎧🎨🎩🎪🎫🎬🎭🎮🎯🎰🎱🎲🎳🎴🎵🎶🎷🎸🎹🎺🎻🎼🎽🎾🎿🏀🏁🏂🏃🏄🏅🏆🏇🏈🏉🏊🏋🏌🏍🏎🏏🏐🏑🏒🏓🏔🏕🏖🏗🏘🏙🏚🏛🏜🏝🏞🏟🏠🏡🏢🏣🏤🏥🏦🏧🏨🏩🏪🏫🏬🏭🏮🏯🏰🏳🏴🏵🏷🏸🏹🏺🏻🏼🏽🏾🏿🐀🐁🐂🐃🐄🐅🐆🐇🐈🐉🐊🐋🐌🐍🐎🐏🐐🐑🐒🐓🐔🐕🐖🐗🐘🐙🐚🐛🐜🐝🐞🐟🐠🐡🐢🐣🐤🐥🐦🐧🐨🐩🐪🐫🐬🐭🐮🐯🐰🐱🐲🐳🐴🐵🐶🐷🐸🐹🐺🐻🐼🐽🐾🐿👀👁👂👃👄👅👆👇👈👉👊👋👌👍👎👏👐👑👒👓👔👕👖👗👘👙👚👛👜👝👞👟👠👡👢👣👤👥👦👧👨👩👪👫👬👭👮👯👰👱👲👳👴👵👶👷👸👹👺👻👼👽👾👿💀💁💂💃💄💅💆💇💈💉💊💋💌💍💎💏💐💑💒💓💔💕💖💗💘💙💚💛💜💝💞💟💠💡💢💣💤💥💦💧💨💩💪💫💬💭💮💯💰💱💲💳💴💵💶💷💸💹💺💻💼💽💾💿📀📁📂📃📄📅📆📇📈</div>
+
+</section>
+<section>
+
+<h1>MySQLのCharset</h1>
+
+<ul>
+  <li>サーバー</li>
+  <li>クライアント</li>
+  <li>サーバー/クライアント間の接続</li>
+  <li>データベース毎</li>
+  <li>テーブル毎</li>
+  <li>カラム毎</li>
+</ul>
+
+<p>…を全部別々に設定できる（嫌な予感しかしない）</p>
+
+</section>
+<section>
+
+<h1>ハマりたくなければ全部統一</h1>
+
+</section>
+<section>
+
+<h1>サーバー Charset</h1>
+
+<ul>
+  <li>新規に作成するデータベースのCharsetのデフォルト</li>
+  <li>これさえ指定しておけばだいたいOK</li>
+  <li>mysqld の起動オプション<br>
+<code>--character-set-server=utf8mb4</code>
+</li>
+  <li>my.cnf の <code>[mysqld]</code> セクション<br>
+<code>character-set-server = utf8mb4</code>
+</li>
+  <li>サーバー変数 <code>character_set_server</code>
+</li>
+</ul>
+
+</section>
+<section>
+
+<h1>データベース Charset</h1>
+
+<ul>
+  <li>
+    <p>配下に作成するテーブルのCharsetのデフォルト値</p>
+  </li>
+  <li>
+    <p>サーバーCharsetと同じであれば指定しなくてもいい</p>
+  </li>
+  <li>
+    <p>作成: <code>CREATE DATABASE db CHARSET utf8mb4;</code></p>
+  </li>
+  <li>
+    <p>確認: <code>SHOW CREATE DATABASE db;</code></p>
+  </li>
+  <li>
+    <p>変更: <code>ALTER DATABASE db CHARSET utf8mb4;</code></p>
+  </li>
+  <li>
+    <p>変更しても既存のテーブルCharsetは変更されない</p>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h1>テーブル Charset</h1>
+
+<ul>
+  <li>テーブル内カラムのCharsetのデフォルト値</li>
+  <li>
+    <p>データベースCharsetと同じであれば指定する必要はない</p>
+  </li>
+  <li>
+    <p>作成: <code>CREATE TABLE tbl (...) CHARSET utf8mb4;</code></p>
+  </li>
+  <li>確認: <code>SHOW CREATE TABLE tbl;</code>
+</li>
+</ul>
+
+</section>
+<section>
+
+<h1>テーブル Charset</h1>
+
+<ul>
+  <li>
+    <p>テーブル属性だけ変更:<br>
+<code>ALTER TABLE tbl CHARSET utf8mb4;</code></p>
+
+    <ul>
+      <li>既存のカラムのcharsetは変更されない</li>
+    </ul>
+  </li>
+  <li>
+    <p>全カラムとデータの変換:<br>
+<code>ALTER TABLE tbl CONVERT TO CHARSET utf8mb4;</code></p>
+
+    <ul>
+      <li>utf8 で作ってしまったテーブルを utf8mb4 に変換とか</li>
+    </ul>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h1>カラム Charset</h1>
+
+<ul>
+  <li>
+    <p>テーブルCharsetと同じであれば指定する必要はない</p>
+  </li>
+  <li>
+    <p>作成: <code>CREATE TABLE tbl (col VARCHAR(10) CHARSET utf8mb4, ...);</code></p>
+  </li>
+  <li>
+    <p>確認: <code>SHOW CREATE TABLE tbl;</code></p>
+  </li>
+  <li>
+    <p>変更: <code>ALTER TABLE tbl MODIFY col VARCHAR(10) CHARSET utf8mb4;</code></p>
+  </li>
+  <li>
+    <p>変更するとカラム内のデータも変換される</p>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h1>クライアント Charset</h1>
+
+<ul>
+  <li>
+    <p>クライアント内での文字列処理と<br>
+サーバーとの接続Charsetに使用される</p>
+  </li>
+  <li>
+    <p>指定方法はプログラム/言語に依存</p>
+
+    <p><code>mysql --default-character-set=utf8mb4</code></p>
+  </li>
+  <li>
+    <p>プログラムによっては my.cnf の <code>[client]</code> セクションが有効</p>
+
+    <pre><code class="language-ini">[client]
+loose-default-character-set = utf8mb4
+</code></pre>
+    <p><span style="font-size:80%">「loose-」をつけておくとそのパラメータを知らないプログラムは無視してくれる</span></p>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h1>クライアント Charset</h1>
+
+<ul>
+  <li>
+    <p>mysqld との接続毎に異なる</p>
+  </li>
+  <li>
+    <p>mysql コマンドでOKでも他のアプリからはNGかもしれない</p>
+  </li>
+  <li>
+    <p>何も指定しなければ latin1</p>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h1>Charset の確認</h1>
+
+<pre><code class="language-sql">mysql&gt; SHOW VARIABLES LIKE '%char%';
++--------------------------+----------------------------+
+| Variable_name            | Value                      |
++--------------------------+----------------------------+
+| character_set_client     | utf8mb4                    |
+| character_set_connection | utf8mb4                    |
+| character_set_database   | utf8mb4                    |
+| character_set_filesystem | binary                     |
+| character_set_results    | utf8mb4                    |
+| character_set_server     | utf8mb4                    |
+| character_set_system     | utf8                       |
+| character_sets_dir       | /usr/share/mysql/charsets/ |
++--------------------------+----------------------------+
+</code></pre>
+
+</section>
+<section>
+
+<h1>mysql コマンド</h1>
+
+<ul>
+  <li>
+    <p>mysql コマンドのデフォルトCharsetは <em>auto</em></p>
+  </li>
+  <li>
+    <p>システムロケール(LC_ALL, LC_CTYPE, LANG 環境変数等)により値が決定</p>
+  </li>
+  <li>
+    <p><code>LANG=ja_JP.UTF-8</code> の場合は utf8 になる<br>
+<em>utf8mb4 ではない</em></p>
+  </li>
+  <li>
+    <p><code>LANG=C</code> の場合は <em>latin1</em> になる</p>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h1>utf8 と utf8mb4 の混在で起きること</h1>
+
+</section>
+<section>
+
+<h1>utf8接続から4バイト文字を参照</h1>
+
+<p>クライアントが扱えない文字は「?」になる</p>
+
+<pre><code class="language-sql">mysql&gt; SELECT str FROM tbl;
++-------+
+| str   |
++-------+
+| ?と?  |     ← '🍣と🍺'
+| ?と?  |     ← '?と?'
++-------+
+</code></pre>
+
+</section>
+<section>
+
+<h1>バイト列を見れば違いがわかる</h1>
+
+<pre><code class="language-sql">mysql&gt; SELECT HEX(str) FROM tbl;
++------------------------+
+| HEX(str)               |
++------------------------+
+| F09F8DA3E381A8F09F8DBA | ← '🍣と🍺'
+| 3FE381A83F             | ← '?と?'
++------------------------+
+</code></pre>
+
+</section>
+<section>
+
+<h1>utf8接続から4バイト文字を登録</h1>
+
+<p>文字化けして登録されちゃう</p>
+
+<pre><code class="language-sql">mysql&gt; INSERT INTO tbl (str) VALUES ('🍣と🍺');
+Query OK, 1 row affected, 2 warnings (0.05 sec)
+
+mysql&gt; SELECT str,HEX(str) FROM tbl;
++-------------+------------------------+
+| str         | HEX(str)               |
++-------------+------------------------+
+| ????と????  | 3F3F3F3FE381A83F3F3F3F |
++-------------+------------------------+
+</code></pre>
+
+</section>
+<section>
+
+<h1>sql_mode</h1>
+
+<ul>
+  <li>
+    <p>MySQLはおかしなことしてもあまりエラーにならない(余計なお世話)</p>
+  </li>
+  <li>
+    <p>sql_mode でちゃんとエラーにしてくれる</p>
+  </li>
+</ul>
+
+<pre><code class="language-sql">mysql&gt; SET sql_mode='STRICT_ALL_TABLES';
+
+mysql&gt; INSERT INTO tbl (str) VALUES ('🍣と🍺');
+ERROR 1366 (HY000): Incorrect string value:
+ '\xF0\x9F\x8D\xA3\xE3\x81...' for column 'str' at row 1
+</code></pre>
+
+</section>
+<section>
+
+<h1>sql_mode</h1>
+
+<p>MySQL 5.7 からはデフォルト</p>
+
+<pre><code>mysql&gt; SELECT @@sql_mode
+ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,
+NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,
+NO_ENGINE_SUBSTITUTION
+</code></pre>
+
+</section>
+<section>
+
+<h1>🍣=🍺 問題</h1>
+
+<p><img src="twitter.png" alt=""></p>
+
+</section>
+<section>
+
+<h1>🍣と🍺以外でも</h1>
+
+<pre><code>mysql&gt; SELECT '🐰'='🐢';
++---------+
+| '?'='?' |
++---------+
+|       1 |
++---------+
+mysql&gt; SELECT '🍛'='💩';
++---------+
+| '?'='?' |
++---------+
+|       1 |
++---------+
+</code></pre>
+
+</section>
+<section>
+
+<h1>実は未知の文字�扱い</h1>
+
+<h1>‘🍣’=’🍺’=’�’</h1>
+
+</section>
+<section>
+
+<h1>Collation</h1>
+
+</section>
+<section>
+
+<h1>Collation</h1>
+
+<ul>
+  <li>文字の照合規則・照合順序</li>
+  <li>Charset 毎に Collation がある</li>
+  <li>Charset の指定は Charset のデフォルトの Collation を指定するのと同じ</li>
+</ul>
+
+</section>
+<section>
+
+<h1>Collation 一覧</h1>
+
+<pre><code class="language-sql">mysql&gt; SHOW COLLATION LIKE 'utf8mb4%';
++------------------------+---------+-----+---------+----------+---------+
+| Collation              | Charset | Id  | Default | Compiled | Sortlen |
++------------------------+---------+-----+---------+----------+---------+
+| utf8mb4_general_ci     | utf8mb4 |  45 | Yes     | Yes      |       1 |
+| utf8mb4_bin            | utf8mb4 |  46 |         | Yes      |       1 |
+| utf8mb4_unicode_ci     | utf8mb4 | 224 |         | Yes      |       8 |
+| utf8mb4_icelandic_ci   | utf8mb4 | 225 |         | Yes      |       8 |
+| utf8mb4_latvian_ci     | utf8mb4 | 226 |         | Yes      |       8 |
+| utf8mb4_romanian_ci    | utf8mb4 | 227 |         | Yes      |       8 |
+| utf8mb4_slovenian_ci   | utf8mb4 | 228 |         | Yes      |       8 |
+| utf8mb4_polish_ci      | utf8mb4 | 229 |         | Yes      |       8 |
+| utf8mb4_estonian_ci    | utf8mb4 | 230 |         | Yes      |       8 |
+| utf8mb4_spanish_ci     | utf8mb4 | 231 |         | Yes      |       8 |
+| utf8mb4_swedish_ci     | utf8mb4 | 232 |         | Yes      |       8 |
+| utf8mb4_turkish_ci     | utf8mb4 | 233 |         | Yes      |       8 |
+| utf8mb4_czech_ci       | utf8mb4 | 234 |         | Yes      |       8 |
+</code></pre>
+
+</section>
+<section>
+
+<h1>utf8mb4 の Collation</h1>
+
+<ul>
+  <li>utf8mb4_general_ci</li>
+  <li>utf8mb4_bin</li>
+  <li>utf8mb4_unicode_ci</li>
+  <li>utf8mb4_unicode_520_ci</li>
+  <li>utf8mb4_言語_ci</li>
+  <li><em>utf8mb4_japanese_ci は無い</em></li>
+</ul>
+
+<p>「ci」は Case Insensitive(大文字小文字を区別しない)の意味らしい</p>
+
+</section>
+<section>
+
+<h1>utf8mb4_general_ci</h1>
+
+<ul>
+  <li>utf8mb4 Charset のデフォルト Collation</li>
+  <li>大文字小文字を区別しない(<code>A</code>=<code>a</code>, <code>Ａ</code>=<code>ａ</code>)</li>
+  <li>全角半角は区別する(<code>A</code>≠<code>Ａ</code>)</li>
+  <li>絵文字を区別しない(🍣=🍺)</li>
+</ul>
+
+</section>
+<section>
+
+<h1>utf8mb4_bin</h1>
+
+<ul>
+  <li>varchar(n) binary</li>
+  <li>全文字を区別する(<code>A</code>≠<code>a</code>, 🍣≠🍺)</li>
+</ul>
+
+</section>
+<section>
+
+<h1>utf8mb4_unicode_ci</h1>
+
+<ul>
+  <li>Unicode Collation Algorithm 4.0.0
+    <ul>
+      <li><span style="font-size: 70%"><a href="http://www.unicode.org/reports/tr10/tr10-11.html">http://www.unicode.org/reports/tr10/tr10-11.html</a></span></li>
+      <li><span style="font-size: 70%"><a href="http://dev.mysql.com/doc/refman/5.6/ja/charset-unicode-sets.html">http://dev.mysql.com/doc/refman/5.6/ja/charset-unicode-sets.html</a></span></li>
+    </ul>
+  </li>
+  <li>大文字小文字を区別しない(<code>A</code>=<code>a</code>, <code>Ａ</code>=<code>ａ</code>)</li>
+  <li>
+<em>全角半角も区別しない</em>(<code>A</code>=<code>Ａ</code>)</li>
+  <li>
+<em>絵文字を区別しない</em>(🍣=🍺)</li>
+  <li>ひらがな、カタカナ、濁点有無、全角、半角を区別しない(は=ば=ぱ=ハ=バ=パ=ﾊ)
+    <ul>
+      <li>「ハハ=パパ=ババ問題」</li>
+    </ul>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h1>utf8mb4_unicode_520_ci</h1>
+
+<ul>
+  <li>Unicode Collation Algorithm 5.2.0
+    <ul>
+      <li><span style="font-size: 70%"><a href="http://www.unicode.org/reports/tr10/tr10-20.html">http://www.unicode.org/reports/tr10/tr10-20.html</a></span></li>
+    </ul>
+  </li>
+  <li>大文字小文字を区別しない(<code>A</code>=<code>a</code>, <code>Ａ</code>=<code>ａ</code>)</li>
+  <li>全角半角も区別しない(<code>A</code>=<code>Ａ</code>)</li>
+  <li>
+<em>絵文字を区別する</em>(🍣≠🍺)</li>
+  <li>ひらがな、カタカナ、濁点有無、全角、半角を区別しない(は=ば=ぱ=ハ=バ=パ=ﾊ)</li>
+</ul>
+
+</section>
+<section>
+
+<h1>utf8mb4_*</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Collation</th>
+      <th>A : a</th>
+      <th>🍣 : 🍺</th>
+      <th>は : ば<br>ぱ : ﾊ</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>general_ci</td>
+      <td>=</td>
+      <td>=</td>
+      <td>≠</td>
+    </tr>
+    <tr>
+      <td>bin</td>
+      <td>≠</td>
+      <td>≠</td>
+      <td>≠</td>
+    </tr>
+    <tr>
+      <td>unicode_ci</td>
+      <td>=</td>
+      <td>=</td>
+      <td>=</td>
+    </tr>
+    <tr>
+      <td>unicode_520_ci</td>
+      <td>=</td>
+      <td>≠</td>
+      <td>=</td>
+    </tr>
+  </tbody>
+</table>
+
+</section>
+<section>
+
+<h1>utf8mb4_*</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Collation</th>
+      <th>A : a</th>
+      <th>🍣 : 🍺</th>
+      <th>は : ば<br>ぱ : ﾊ</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>general_ci</td>
+      <td>=</td>
+      <td>=</td>
+      <td>≠</td>
+    </tr>
+    <tr>
+      <td>bin</td>
+      <td>≠</td>
+      <td>≠</td>
+      <td>≠</td>
+    </tr>
+    <tr>
+      <td>unicode_ci</td>
+      <td>=</td>
+      <td>=</td>
+      <td>=</td>
+    </tr>
+    <tr>
+      <td>unicode_520_ci</td>
+      <td>=</td>
+      <td>≠</td>
+      <td>=</td>
+    </tr>
+    <tr>
+      <td><em>ぼくたちが欲しかった<br>japanese_ci</em></td>
+      <td>=</td>
+      <td>≠</td>
+      <td>≠</td>
+    </tr>
+  </tbody>
+</table>
+
+</section>
+<section>
+
+<h3>寿司=ビール問題 : MySQL 8.0でのUTF8サポート入門(MySQL Server Blogより)</h3>
+
+<p><a href="https://yakst.com/ja/posts/4405">https://yakst.com/ja/posts/4405</a></p>
+
+<blockquote>
+  <p><em>私たちは日本語の照合順序の追加も計画中です。</em>日本語は興味深い言語であり、私たちの照合順序のエキスパートであるXing ZhangとBernt Marius Johnsenが、今後のブログ記事でもっと詳しく説明するはずです。</p>
+</blockquote>
+
+</section>
+<section>
+
+<h1>まとめ</h1>
+
+<ul>
+  <li>ふつうは utf8mb4</li>
+  <li>サーバーとクライアントの両方で Charset を指定</li>
+  <li>sql_mode をちゃんと設定</li>
+  <li>Collation は適切に</li>
+  <li>MySQL 8 で unicode_japanese_ci ができるかも!?</li>
+</ul>
+
+</section>
+
+  </div>
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.js"></script>
+
+<script>
+  (function() {
+  function extend( a, b ) {
+    for(var i in b) {
+      a[i] = b[i];
+    }
+  }
+  var baseOptions = {
+    transition: 'default',
+
+    dependencies: [
+      { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+      { src: 'plugin/zoom-js/zoom.js', async: true },
+      { src: 'plugin/notes/notes.js', async: true }
+    ]
+  };
+  var configOptions = {"controls":true,"postgress":true,"slideNumber":true,"history":true,"overview":true,"enter":true,"touch":false,"loop":false,"rtl":false,"fragments":true,"autoSlide":0,"autoSlideStoppable":false,"mouseWheel":false,"transition":"default","transitionSpeed":"fast"}
+  var initializeOptions = {};
+  extend(initializeOptions, baseOptions);
+  extend(initializeOptions, configOptions);
+  Reveal.initialize(initializeOptions);
+})();
+
+</script>
+
+  </body>
+</html>

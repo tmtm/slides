@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+  <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+    <meta charset="utf-8">
+
+<title>本当はこわいMySQLプロトコル</title>
+
+<meta name="description" content="">
+<meta name="author" content="">
+<meta name="generator" content="reveal-ck 3.8.0">
+
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+<link rel="stylesheet" href="css/reveal.css">
+<link rel="stylesheet" href="css/theme/tmtms.css" id="theme">
+
+<!-- Code syntax highlighting -->
+<link rel="stylesheet" href="lib/css/zenburn.css">
+
+<link rel="stylesheet" href="css/reveal-ck.css">
+
+<link rel="stylesheet" href="css/theme/tmtms.css">
+
+<!-- Printing and PDF exports -->
+<script>
+  var link = document.createElement( 'link' );
+  link.rel = 'stylesheet';
+  link.type = 'text/css';
+  link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+  document.getElementsByTagName( 'head' )[0].appendChild( link );
+</script>
+
+<!--[if lt IE 9]>
+<script src="lib/js/html5shiv.js"></script>
+<![endif]-->
+
+  </head>
+
+  <body>
+    <div class="reveal">
+  <!-- Any section element inside of this container is displayed as a slide -->
+  <div class="slides">
+    <section>
+
+<h2>本当はこわいMySQLプロトコル</h2>
+
+<p>Club MySQL #2</p>
+
+<p>2017/11/28</p>
+
+<p>とみたまさひろ</p>
+
+</section>
+<section>
+
+<p>MySQLのXじゃない方のプロトコル</p>
+
+</section>
+<section>
+
+<h3>接続</h3>
+
+<pre><code class="language-mermaid">sequenceDiagram
+    Client --&gt;&gt; Server: Connection
+    Server -&gt;&gt; Client: Initial
+    Client -&gt;&gt; Server: Authentication
+    Server -&gt;&gt; Client: OK
+</code></pre>
+
+</section>
+<section>
+
+<h3>クエリ(参照系)</h3>
+
+<pre><code class="language-mermaid">sequenceDiagram
+    Client -&gt;&gt; Server: Query
+    Server -&gt;&gt; Client: Field Count
+    loop field count
+        Server -&gt;&gt; Client: Field Info
+    end
+    loop record count
+        Server -&gt;&gt; Client: Record Data
+    end
+    Server -&gt;&gt; Client: EOF
+</code></pre>
+
+</section>
+<section>
+
+<h3>クエリ(更新系)</h3>
+
+<pre><code class="language-mermaid">sequenceDiagram
+    Client -&gt;&gt; Server: Query
+    Server -&gt;&gt; Client: Status
+</code></pre>
+
+</section>
+<section>
+
+<p>クエリをパースするのはサーバー</p>
+
+</section>
+<section>
+
+<p>クライアントはクエリが参照か更新かは知らない</p>
+
+</section>
+<section>
+
+<p>サーバーから教えてもらう</p>
+
+</section>
+<section>
+
+<h3>特殊なクエリ</h3>
+
+</section>
+<section>
+
+<p>LOAD DATA LOCAL INFILE</p>
+
+<pre><code class="language-sql">LOAD DATA LOCAL INFILE 'filename' INTO TABLE tblname;
+</code></pre>
+
+<p>クライアントのファイルをテーブルにロード</p>
+
+</section>
+<section>
+
+<p>クエリをパースするのはサーバー<br>
+(2回目)</p>
+
+</section>
+<section>
+
+<p>サーバーからファイル名を教えてもらう</p>
+
+</section>
+<section>
+
+<p>LOAD DATA LOCAL INFILE</p>
+
+<pre><code class="language-mermaid">sequenceDiagram
+    Client -&gt;&gt; Server: Query
+    Server -&gt;&gt; Client: Filename
+    Client -&gt;&gt; Server: Contents
+    Client -&gt;&gt; Server: EOF
+    Server -&gt;&gt; Client: Status
+</code></pre>
+
+</section>
+<section>
+
+<p>クライアントの指定とは異なるファイル名が<br>
+サーバーから返されてもそれを送る</p>
+
+</section>
+<section>
+
+<p>デモ: Proxy でファイル名を差し替える</p>
+
+<pre><code class="language-mermaid">sequenceDiagram
+    Client -&gt;&gt; Proxy: Query
+    Proxy -&gt;&gt; Server: Query
+    Server -&gt;&gt; Proxy: Filename(hoge)
+    Proxy -&gt;&gt; Client: Filename(fuga)
+    Client -&gt;&gt; Proxy: Contents
+    Proxy -&gt;&gt; Server: Contents
+    Client -&gt;&gt; Proxy: EOF
+    Proxy -&gt;&gt; Server: EOF
+    Server -&gt;&gt; Proxy: Status
+    Proxy -&gt;&gt; Client: Status
+</code></pre>
+
+</section>
+<section>
+
+<h2>こわい!</h2>
+
+</section>
+<section>
+
+<p>クエリをパースするのはサーバー<br>
+(3回目)</p>
+
+</section>
+<section>
+
+<p>デモ: Proxy でLOAD DATA の振りをする</p>
+
+<pre><code class="language-mermaid">sequenceDiagram
+    Client -&gt;&gt; Proxy: Query
+    Proxy -&gt;&gt; Server: Query
+    Server -&gt;&gt; Proxy: Status
+    Proxy -&gt;&gt; Client: Filename
+    Client -&gt;&gt; Proxy: Contents
+    Client -&gt;&gt; Proxy: EOF
+    Proxy -&gt;&gt; Client: Status
+</code></pre>
+
+</section>
+<section>
+
+<h2>こわい!</h2>
+
+</section>
+<section>
+
+<h3>対策</h3>
+
+<ul>
+  <li>
+    <p>信頼できないサーバーに繋がない</p>
+  </li>
+  <li>
+    <p>SSL接続</p>
+  </li>
+  <li>
+    <p>クライアント側で LOCAL INFILE を無効化</p>
+
+    <pre><code class="language-text">% mysql --local-infile=false
+</code></pre>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h2>おわり</h2>
+
+</section>
+
+  </div>
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.js"></script>
+
+<script src="js/mermaid.js"></script>
+
+<script>
+  (function() {
+  function extend( a, b ) {
+    for(var i in b) {
+      a[i] = b[i];
+    }
+  }
+  var baseOptions = {
+    transition: 'default',
+
+    dependencies: [
+      { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+      { src: 'plugin/zoom-js/zoom.js', async: true },
+      { src: 'plugin/notes/notes.js', async: true }
+    ]
+  };
+
+  
+    baseOptions.dependencies.push({ src: 'plugin/mermaid/mermaid.js', async: true });
+  
+    baseOptions.dependencies.push({ src: 'plugin/rabbit/rabbit.js', async: true });
+  
+
+  var configOptions = {"controls":true,"postgress":true,"slideNumber":true,"history":true,"overview":true,"enter":true,"touch":false,"loop":false,"rtl":false,"fragments":true,"autoSlide":0,"autoSlideStoppable":false,"mouseWheel":false,"transition":"default","transitionSpeed":"fast","alloted_time":600}
+  var initializeOptions = {};
+  extend(initializeOptions, baseOptions);
+  extend(initializeOptions, configOptions);
+  Reveal.initialize(initializeOptions);
+})();
+
+</script>
+
+  </body>
+</html>

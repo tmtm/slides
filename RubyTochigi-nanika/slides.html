@@ -1,0 +1,128 @@
+<section>
+
+<h1>ネットワークこわい</h1>
+
+<p>とちぎRuby会議07</p>
+
+<p>2017-08-26</p>
+
+<p>とみたまさひろ</p>
+
+</section>
+<section>
+
+<ul>
+  <li>
+    <p>Ruby歴 約20年<br>
+(本日の老害枠の一人)</p>
+  </li>
+  <li>
+    <p>得意分野: 文字化け</p>
+  </li>
+  <li>Software Design 2016年12月号
+    <ul>
+      <li>「Rubyと文字コード」/「MySQLと文字コード」</li>
+    </ul>
+  </li>
+  <li>Software Design 2017年7月号
+    <ul>
+      <li>「MySQL［SELECT文］集中講座」</li>
+    </ul>
+  </li>
+  <li>今日は長野から5時間かけてきました<br>
+(普通に新幹線使えば3時間)</li>
+</ul>
+
+</section>
+<section>
+
+<p>Ruby成分なし</p>
+
+</section>
+<section>
+
+<p>ネットワークサーバープロセスを起動しようとしたら<br>
+エラー</p>
+
+<pre><code class="language-text">% ruby -rsocket -e 'TCPServer.new(12345).accept'
+-e:1:in `initialize': Address already in use -
+ bind(2) for nil port 12345 (Errno::EADDRINUSE)
+	from -e:1:in `new'
+	from -e:1:in `&lt;main&gt;'
+</code></pre>
+
+</section>
+<section>
+
+<p>「ははーん、さては誰かが12345ポートを掴んでるな」</p>
+
+</section>
+<section>
+
+<pre><code class="language-text">% sudo netstat -an | grep 12345
+%
+</code></pre>
+
+<p>あれ？</p>
+
+</section>
+<section>
+
+<pre><code class="language-text">% sudo lsof -i -P  | grep 12345
+%
+</code></pre>
+
+<p>あれ？</p>
+
+</section>
+<section>
+
+<p>なんだかわからない！</p>
+
+</section>
+<section>
+
+<p>原因は…</p>
+
+</section>
+<section>
+
+<p>ふつうはTCPサーバーは、</p>
+
+<ul>
+  <li>socket()</li>
+  <li>bind()</li>
+  <li>listen()</li>
+  <li>accept()</li>
+</ul>
+
+<p>するんだけど</p>
+
+<p>bind()で止まってるやつがいた</p>
+
+</section>
+<section>
+
+<p>Rubyで書くとこんな感じ</p>
+
+<pre><code class="language-ruby">Socket.new(:INET, :STREAM).
+  bind(Addrinfo.tcp("0.0.0.0", 12345))
+sleep
+</code></pre>
+
+</section>
+<section>
+
+<p>このようなプロセスはどうやったら調べられるか</p>
+
+</section>
+<section>
+
+<h1>わかりません！😇</h1>
+
+</section>
+<section>
+
+<h1>こわい 😱</h1>
+
+</section>

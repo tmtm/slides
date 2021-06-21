@@ -1,0 +1,157 @@
+<section>
+
+<h1>CSV</h1>
+
+<p>とちぎRuby会議07</p>
+
+<p>2017-08-26</p>
+
+<p>とみたまさひろ</p>
+
+</section>
+<section>
+
+<ul>
+  <li>
+    <p>Ruby歴 約20年<br>
+(本日の老害枠の一人)</p>
+  </li>
+  <li>
+    <p>得意分野: 文字化け</p>
+  </li>
+  <li>Software Design 2016年12月号
+    <ul>
+      <li>「Rubyと文字コード」/「MySQLと文字コード」</li>
+    </ul>
+  </li>
+  <li>Software Design 2017年7月号
+    <ul>
+      <li>「MySQL［SELECT文］集中講座」</li>
+    </ul>
+  </li>
+  <li>今日は長野から5時間かけてきました<br>
+(思ってたより近かった)</li>
+</ul>
+
+</section>
+<section>
+
+<p>その昔RubyのCSVは遅かった</p>
+
+</section>
+<section>
+
+<p>みんな大好き KEN_ALL.CSV</p>
+
+<pre><code class="language-text">% ruby -v -rcsv -e 'CSV.foreach("KEN_ALL.CSV"){}'
+ruby 1.8.7 (2013-06-27 patchlevel 374) [x86_64-linux]
+
+real	0m33.732s
+user	0m33.712s
+sys	0m0.016s
+</code></pre>
+
+</section>
+<section>
+
+<p>LightCsvってのを作ったんですよ</p>
+
+<pre><code class="language-text">% ruby -v -rlightcsv -e 'LightCsv.foreach("KEN_ALL.CSV"){}'
+ruby 1.8.7 (2013-06-27 patchlevel 374) [x86_64-linux]
+
+real	0m3.336s
+user	0m3.312s
+sys	0m0.020s
+
+</code></pre>
+
+<p>速い！</p>
+
+</section>
+<section>
+
+<p>でも最近は普通に速い</p>
+
+<pre><code class="language-text">% ruby -v -Ecp932 -rcsv -e 'CSV.foreach("KEN_ALL.CSV"){}'
+ruby 2.4.0p0 (2016-12-24 revision 57164) [x86_64-linux]
+
+real	0m2.869s
+user	0m2.836s
+sys	0m0.020s
+</code></pre>
+
+<p>LightCsvはお役御免</p>
+
+</section>
+<section>
+
+<p>でも一つ問題が</p>
+
+</section>
+<section>
+
+<p>nilを返しやがる！</p>
+
+<pre><code class="language-ruby">require 'csv'
+
+'a,"",b,,c'.parse_csv
+#=&gt; ["a", "", "b", nil, "c"]
+</code></pre>
+
+</section>
+<section>
+
+<p>考慮しないとぬるぽ</p>
+
+<pre><code class="language-ruby">require 'csv'
+
+'a,"",b,,c'.parse_csv.each do |col|
+  p col.upcase
+end
+</code></pre>
+
+<pre><code class="language-text">"A"
+""
+"B"
+a.rb:4:in `block in &lt;main&gt;':
+ undefined method `upcase' for nil:NilClass (NoMethodError)
+</code></pre>
+
+</section>
+<section>
+
+<h1>誰得 🤔❓</h1>
+
+</section>
+<section>
+
+<p>ということでnilを返さないCSVライブラリを作った</p>
+
+</section>
+<section>
+
+<h1>RightCSV</h1>
+
+</section>
+<section>
+
+<pre><code class="language-ruby">require 'rightcsv'
+
+'a,"",b,,c'.parse_csv
+#=&gt; ["a", "", "b", "", "c"]
+
+'a,"",b,,c'.parse_csv.map(&amp;:upcase)
+#=&gt; ["A", "", "B", "", "C"]
+</code></pre>
+
+</section>
+<section>
+
+<p>こんなの使わなくてもみんなが幸せになりますように</p>
+
+</section>
+<section>
+
+<h1>以上</h1>
+
+</section>

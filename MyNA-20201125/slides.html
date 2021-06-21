@@ -1,0 +1,402 @@
+<section>
+
+<h2>MySQL Parameters の裏側</h2>
+
+<p>日本MySQLユーザ会会</p>
+
+<p>2020-11-25</p>
+
+<p>とみたまさひろ</p>
+
+</section>
+<section>
+
+<h2>自己紹介</h2>
+
+<p><img src="images/icon2.jpg" alt="" style="position:absolute;top:0%;right:0;width:180px;border:0px"></p>
+
+<ul>
+  <li>とみたまさひろ</li>
+  <li><a href="https://twitter.com/tmtms">https://twitter.com/tmtms</a></li>
+  <li><a href="https://tmtms.hatenablog.com">https://tmtms.hatenablog.com</a></li>
+  <li><a href="https://zenn.dev/tmtms">https://zenn.dev/tmtms</a></li>
+  <li>Ruby / メール / 文字化け</li>
+</ul>
+
+</section>
+<section>
+
+<h2>MySQL Parameters</h2>
+
+<p><a href="https://mysql-params.tmtms.net">https://mysql-params.tmtms.net</a></p>
+
+<p>MySQLのバージョン間の差分を見れる</p>
+
+</section>
+<section>
+
+<ul>
+  <li>
+<code>mysqld</code> のコマンドラインパラメータの値</li>
+  <li>
+<code>mysql</code> のコマンドラインパラメータの値</li>
+  <li>サーバー変数の値</li>
+  <li>ステータスの値</li>
+  <li>Character set 名</li>
+  <li>Collation 名</li>
+  <li>権限名</li>
+  <li>関数名</li>
+  <li>information_schema のテーブル名とカラム名</li>
+  <li>performance_schema のテーブル名とカラム名</li>
+  <li>エラーメッセージ</li>
+</ul>
+
+</section>
+<section>
+
+<h2>「MySQL Parameters の裏側」</h2>
+
+</section>
+<section>
+
+<h2>裏側は無い</h2>
+
+</section>
+<section>
+
+<h2>Vue.js の勉強で作り始めた</h2>
+
+<div style="margin: 0 20%">
+<blockquote class="twitter-tweet">
+<p lang="ja" dir="ltr">Vue.jsの練習にMySQLのパラメータを表示するページを作ってみた。バージョン間の比較もできる。とりあえず手元にあったバージョンだけ。 / “MySQL Parameters” <a href="https://t.co/0DXP9Oz1l2">https://t.co/0DXP9Oz1l2</a></p>— とみたまさひろ🍣🍺 (<a href="https://github.com/tmtms" class="user-mention">@tmtms</a>) <a href="https://twitter.com/tmtms/status/966360878764326912?ref_src=twsrc%5Etfw">February 21, 2018</a>
+</blockquote> <script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+
+</section>
+<section>
+
+<h2>Vue.js</h2>
+
+<blockquote style="font-size: 70%">
+  <p>Vue.js（ヴュージェイエス）またはVueは、Webアプリケーションにおけるユーザーインターフェイスを構築するための、オープンソースのJavaScriptフレームワークである。他のJavaScriptライブラリを使用するプロジェクトへの導入において、容易になるように設計されている。一方で高機能なシングルページアプリケーション（SPA）を構築することも可能である。</p>
+</blockquote>
+
+<p><a href="https://ja.wikipedia.org/wiki/Vue.js">https://ja.wikipedia.org/wiki/Vue.js</a></p>
+
+</section>
+<section>
+
+<h2>全部 JavaScript で処理</h2>
+
+</section>
+<section>
+
+<h2>フロントエンドのみ</h2>
+
+</section>
+<section>
+
+<h2>裏側(バックエンド)は無い</h2>
+
+</section>
+<section>
+
+<h2>裏側はないけど前処理はある</h2>
+
+</section>
+<section>
+
+<h2>仕組み</h2>
+
+</section>
+<section>
+
+<h2>データは JSON</h2>
+
+<p>バージョン情報</p>
+<pre><code class="language-json">{
+  "8.0.22": "json/8.0.22.json",
+  "8.0.21": "json/8.0.21.json",
+  "8.0.20": "json/8.0.20.json",
+  ...
+}
+</code></pre>
+<p class="humble-link"><a href="https://mysql-params.tmtms.net/mysqld/json/version.json">https://mysql-params.tmtms.net/mysqld/json/version.json</a></p>
+
+</section>
+<section>
+
+<p>mysqld の 8.0.22 のパラメータと値</p>
+<pre><code class="language-json">{
+  "abort-slave-event-count": "0",
+  "activate-all-roles-on-login": "FALSE",
+  "admin-address": "(No default value)",
+  ...
+}
+</code></pre>
+<p class="humble-link"><a href="https://mysql-params.tmtms.net/mysqld/json/8.0.22.json">https://mysql-params.tmtms.net/mysqld/json/8.0.22.json</a></p>
+
+</section>
+<section>
+
+<p>メニューからバージョンが選択されたときに<br>
+JSON を取得して JavaScript でテーブルを作成</p>
+
+<p>差分表示も JavaScript で JSON の差分を確認</p>
+
+</section>
+<section>
+
+<p>サーバーサイドは静的コンテンツだけなので<br>
+GitHub Pages でホスティング</p>
+
+</section>
+<section>
+
+<p>メニューからバージョンを選択したときに URL を変更<br>
+↓↑<br>
+URL を変更したときにバージョンの選択状態を変更</p>
+
+<p style="font-size: 70%; color: #555">自前で <code>history.pushState</code> とかでやってるけど Vue のルーティングを使うともっと簡単にできそうな気がする</p>
+
+</section>
+<section>
+
+<h2>データの作り方</h2>
+
+</section>
+<section>
+
+<p>Linux Generic 64bit バイナリを使用<br>
+<code>mysql-8.0.22-linux-glibc2.12-x86_64.tar.xz</code></p>
+
+<p>インストール先は <code>/usr/local/mysql</code> に統一</p>
+
+<p>ホスト名は <code>hostname</code> に統一</p>
+
+<p>ちゃんと初期設定しないとちゃんと表示できない</p>
+
+<pre><code class="language-shell">scripts/mysql_install_db --no-defaults
+</code></pre>
+
+<pre><code class="language-shell">bin/mysqld --initialize
+</code></pre>
+
+</section>
+<section>
+
+<p><code>mysqld --help -v</code></p>
+
+<pre style="font-size: 50%"><code class="language-text">Variables (--variable-name=value)
+and boolean options {FALSE|TRUE}                             Value (after reading options)
+------------------------------------------------------------ -------------
+abort-slave-event-count                                      0
+activate-all-roles-on-login                                  FALSE
+admin-address                                                (No default value)
+admin-port                                                   33062
+admin-ssl                                                    TRUE
+admin-ssl-ca                                                 (No default value)
+admin-ssl-capath                                             (No default value)
+admin-ssl-cert                                               (No default value)
+admin-ssl-cipher                                             (No default value)
+admin-ssl-crl                                                (No default value)
+admin-ssl-crlpath                                            (No default value)
+...
+</code></pre>
+
+</section>
+<section>
+
+<p><code>mysqld --help -v</code> と <code>show variables</code> は異なるので</p>
+
+<p>それぞれ出力</p>
+
+</section>
+<section>
+
+<h3>権限の取得</h3>
+
+<pre><code class="language-sql">DESC mysql.user;
+</code></pre>
+<pre><code class="language-text">Field	Type	Null	Key	Default	Extra
+Host	char(255)	NO	PRI		
+User	char(32)	NO	PRI		
+Select_priv	enum('N','Y')	NO		N	
+Insert_priv	enum('N','Y')	NO		N	
+Update_priv	enum('N','Y')	NO		N	
+Delete_priv	enum('N','Y')	NO		N	
+Create_priv	enum('N','Y')	NO		N	
+Drop_priv	enum('N','Y')	NO		N	
+Reload_priv	enum('N','Y')	NO		N	
+...
+</code></pre>
+
+<p><code>xxxx_priv</code> から <code>xxxx</code> を取得</p>
+
+</section>
+<section>
+
+<pre><code class="language-sql">DESC mysql.proxies_priv;
+</code></pre>
+
+<pre><code class="language-text">Field	Type	Null	Key	Default	Extra
+Host	char(255)	NO	PRI		
+User	char(32)	NO	PRI		
+Proxied_host	char(255)	NO	PRI		
+Proxied_user	char(32)	NO	PRI		
+With_grant	tinyint(1)	NO		0	
+Grantor	varchar(288)	NO	MUL		
+</code></pre>
+
+<p>結果は見てなくて <code>PROXY</code> 権の有無を確認してるだけ</p>
+
+</section>
+<section>
+
+<pre><code>CREATE USER test IDENTIFIED BY "xxxxxx";
+GRANT ALL ON *.* TO test WITH GRANT OPTION;
+SHOW GRANTS FOR test;
+</code></pre>
+
+<p>8.0 なら <code>DESC mysql.user</code> の代わりにこれだけでいい</p>
+
+</section>
+<section>
+
+<h3>SHOW GRANTS の違い</h3>
+
+<p>5.7</p>
+<pre><code class="language-sql">GRANT ALL PRIVILEGES ON *.* TO 'test'@'%' WITH GRANT OPTION
+</code></pre>
+
+<p>8.0</p>
+<pre style="word-break: break-all; white-space: pre-wrap; font-size: 50%"><code class="language-sql">GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, RELOAD, SHUTDOWN, PROCESS, FILE, REFERENCES, INDEX, ALTER, SHOW DATABASES, SUPER, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, REPLICATION SLAVE, REPLICATION CLIENT, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, CREATE USER, EVENT, TRIGGER, CREATE TABLESPACE, CREATE ROLE, DROP ROLE ON *.* TO `test`@`%` WITH GRANT OPTION
+GRANT APPLICATION_PASSWORD_ADMIN,AUDIT_ADMIN,BACKUP_ADMIN,BINLOG_ADMIN,BINLOG_ENCRYPTION_ADMIN,CLONE_ADMIN,CONNECTION_ADMIN,ENCRYPTION_KEY_ADMIN,GROUP_REPLICATION_ADMIN,INNODB_REDO_LOG_ARCHIVE,INNODB_REDO_LOG_ENABLE,PERSIST_RO_VARIABLES_ADMIN,REPLICATION_APPLIER,REPLICATION_SLAVE_ADMIN,RESOURCE_GROUP_ADMIN,RESOURCE_GROUP_USER,ROLE_ADMIN,SERVICE_CONNECTION_ADMIN,SESSION_VARIABLES_ADMIN,SET_USER_ID,SHOW_ROUTINE,SYSTEM_USER,SYSTEM_VARIABLES_ADMIN,TABLE_ENCRYPTION_ADMIN,XA_RECOVER_ADMIN ON *.* TO `test`@`%` WITH GRANT OPTION
+</code></pre>
+
+</section>
+<section>
+
+<h3>関数</h3>
+
+<p>最初は <code>help functions</code> から</p>
+
+<pre style="word-break: break-all; white-space: pre-wrap; font-size: 50%"><code class="language-shell">mysql&gt; help functions
+You asked for help about help category: "Functions"
+For more information, type 'help &lt;item&gt;', where &lt;item&gt; is one of the following
+categories:
+   Aggregate Functions and Modifiers
+   Bit Functions
+   Cast Functions and Operators
+   Comparison Operators
+   Control Flow Functions
+   Date and Time Functions
+...
+mysql&gt; help Aggregate Functions and Modifiers
+You asked for help about help category: "Aggregate Functions and Modifiers"
+For more information, type 'help &lt;item&gt;', where &lt;item&gt; is one of the following
+topics:
+   AVG
+   BIT_AND
+   BIT_OR
+   BIT_XOR
+...
+</code></pre>
+
+</section>
+<section>
+
+<p>今は <code>mysql.help_category</code> &amp; <code>mysql.help_topic</code> から</p>
+
+<pre style="word-break: break-all; white-space: pre-wrap; font-size: 50%"><code class="language-shell">mysql&gt; select help_category_id,name,parent_category_id from mysql.help_category;
++------------------+---------------------------------+--------------------+
+| help_category_id | name                            | parent_category_id |
++------------------+---------------------------------+--------------------+
+|                0 | Contents                        |                  0 |
+|                1 | Help Metadata                   |                  0 |
+|                2 | Data Types                      |                  0 |
+|                3 | Administration                  |                  0 |
+|                4 | Functions                       |                  0 |
+...
+mysql&gt; select help_topic_id,name,help_category_id from mysql.help_topic;
++---------------+----------------------------+------------------+
+| help_topic_id | name                       | help_category_id |
++---------------+----------------------------+------------------+
+|             0 | HELP_DATE                  |                1 |
+|             1 | HELP_VERSION               |                1 |
+|             2 | AUTO_INCREMENT             |                2 |
+|             3 | HELP COMMAND               |                3 |
+|             4 | ASYMMETRIC_DECRYPT         |                5 |
+|             5 | ASYMMETRIC_DERIVE          |                5 |
+|             6 | ASYMMETRIC_ENCRYPT         |                5 |
+|             7 | ASYMMETRIC_SIGN            |                5 |
+
+</code></pre>
+
+</section>
+<section>
+
+<p>関数っぽいカテゴリからトピックの名前を抽出</p>
+
+<pre style="word-break: break-all; white-space: pre-wrap"><code class="language-sql">select t.name
+  from mysql.help_topic t
+    join mysql.help_category c using (help_category_id)
+  where c.name rlike "functions|operators|geometry (constructors|relations)|properties|mbr|wkt|wkb|xml|gtid"
+    and c.name != "user-defined functions"
+    and t.name not rlike "definition"
+</code></pre>
+
+<p>バージョンごとにカテゴリが変わったりする</p>
+
+</section>
+<section>
+
+<h3>エラーメッセージ</h3>
+
+<p><code>/usr/local/mysql/include/mysqld_error.h</code> から<br>
+エラー番号を取得</p>
+
+<pre><code class="language-cc">//#define OBSOLETE_ER_HASHCHK 1000
+//#define OBSOLETE_ER_NISAMCHK 1001
+#define ER_NO 1002
+#define ER_YES 1003
+#define ER_CANT_CREATE_FILE 1004
+#define ER_CANT_CREATE_TABLE 1005
+#define ER_CANT_CREATE_DB 1006
+#define ER_DB_CREATE_EXISTS 1007
+#define ER_DB_DROP_EXISTS 1008
+//#define OBSOLETE_ER_DB_DROP_DELETE 1009
+#define ER_DB_DROP_RMDIR 1010
+//#define OBSOLETE_ER_CANT_DELETE_FILE 1011
+</code></pre>
+
+</section>
+<section>
+
+<p>エラー番号で <code>perror</code> コマンドを実行</p>
+
+<pre style="word-break: break-all; white-space: pre-wrap"><code class="language-shell">% perror 1002
+MySQL error code MY-001002 (ER_NO): NO
+% perror 1003
+MySQL error code MY-001003 (ER_YES): YES
+% perror 1004
+MySQL error code MY-001004 (ER_CANT_CREATE_FILE): Can't create file '%-.200s' (errno: %d - %s)
+% perror 1005
+MySQL error code MY-001005 (ER_CANT_CREATE_TABLE): Can't create table '%-.200s' (errno: %d - %s)
+% perror 1006
+MySQL error code MY-001006 (ER_CANT_CREATE_DB): Can't create database '%-.192s' (errno: %d - %s)
+</code></pre>
+
+</section>
+<section>
+
+<p>だいたいこんな感じで3ヶ月毎に処理してます</p>
+
+<p>テキトーに作り始めてかなりごちゃごちゃしてるんで Vuetify.js とかで作り直したい</p>
+
+</section>
+<section>
+
+<h2>おわり</h2>
+
+</section>

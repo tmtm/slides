@@ -1,0 +1,77 @@
+<section>
+
+<h1>クラスはクラスクラスのインスタンス</h1>
+
+<p>ながのRubyの会 #1</p>
+
+<p>2017/12/02</p>
+
+<p>とみたまさひろ</p>
+
+</section>
+<section>
+
+<h2>Rubyはほぼすべてがオブジェクト</h2>
+
+</section>
+<section>
+
+<h2>クラスもオブジェクト</h2>
+
+<pre><code class="language-ruby">String.class  #=&gt; Class
+</code></pre>
+
+</section>
+<section>
+
+<h2>Class クラス</h2>
+
+<ul>
+  <li>
+    <p>クラスは Class クラスのインスタンス</p>
+  </li>
+  <li>
+    <p>Class.new でクラスを作ることができる</p>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h2>Class.new</h2>
+
+<pre><code class="language-ruby">Hoge = Class.new
+
+# これと同じ
+
+class Hoge
+end
+</code></pre>
+
+</section>
+<section>
+
+<h2>クラス名</h2>
+
+<p>定数に代入するまでは名無しクラス</p>
+
+<pre><code class="language-ruby">a = Class.new  #=&gt; #&lt;Class:0x00560d27bf2108&gt;
+Hoge = a       #=&gt; Hoge
+Fuga = a       #=&gt; Hoge
+a              #=&gt; Hoge
+</code></pre>
+
+</section>
+<section>
+
+<h2>カオス</h2>
+
+<pre><code class="language-ruby">a           #=&gt; Hoge
+Object.instance_eval{remove_const :Hoge}
+Hoge        #=&gt; uninitialized constatnt Hoge
+a           #=&gt; Hoge
+class Hoge; end
+a == Hoge   #=&gt; false
+</code></pre>
+
+</section>

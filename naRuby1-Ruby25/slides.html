@@ -1,0 +1,657 @@
+<section>
+
+<h1>Ruby 2.5</h1>
+
+<p>ながのRubyの会 #1</p>
+
+<p>2017/12/02</p>
+
+<p>とみたまさひろ</p>
+
+</section>
+<section>
+
+<h2>自己紹介</h2>
+
+<ul>
+  <li>とみた まさひろ
+    <ul>
+      <li><a href="http://tmtms.hatenablog.com">http://tmtms.hatenablog.com</a></li>
+      <li><a href="http://twitter.com/tmtms">http://twitter.com/tmtms</a></li>
+    </ul>
+  </li>
+  <li>長野県北部在住プログラマー</li>
+  <li>好きなプログラミング言語 Ruby</li>
+</ul>
+
+</section>
+<section>
+
+<h3>Rubyは毎年クリスマスにバージョンアップ</h3>
+
+</section>
+<section>
+
+<h1>Ruby 2.5 2017/12/25</h1>
+
+</section>
+<section>
+
+<h2>Ruby 2.5 新機能＆変更</h2>
+
+<p><a href="https://docs.ruby-lang.org/en/trunk/NEWS.html">https://docs.ruby-lang.org/en/trunk/NEWS.html</a></p>
+
+<p><code>ruby 2.5.0preview1 (2017-10-10 trunk 60153)</code></p>
+
+</section>
+<section>
+
+<h1>言語仕様</h1>
+
+</section>
+<section>
+
+<h2>トップレベル定数参照</h2>
+
+<pre><code class="language-ruby">class Foo
+end
+class Bar
+end
+
+# Ruby 2.4
+Foo::Bar  #=&gt; Bar
+
+# Ruby 2.5
+Foo::Bar  #=&gt; NameError 例外
+</code></pre>
+
+</section>
+<section>
+
+<h2>rescue/else/ensure 節</h2>
+
+<pre><code class="language-ruby">def foo
+  begin
+     ...
+  rescue
+     ...
+  end
+end
+</code></pre>
+
+<p>これは従来から簡潔に書けた↓</p>
+
+<pre><code class="language-ruby">def foo
+  ...
+rescue
+  ...
+end
+</code></pre>
+
+</section>
+<section>
+
+<h2>2.5からはdo〜endブロックでも</h2>
+
+<pre><code class="language-ruby">array.each do
+  begin
+    ...
+  rescue
+    ...
+  end
+end
+</code></pre>
+
+<p>簡潔に書ける↓</p>
+
+<pre><code class="language-ruby">array.each do
+  ...
+rescue
+  ...
+end
+</code></pre>
+
+</section>
+<section>
+
+<h2>文字列内式のRefinement</h2>
+
+<pre><code class="language-ruby">class A; def to_s; "a"; end; end
+module B
+  refine A do
+    def to_s; "b"; end
+  end
+end
+class C
+  using B
+  def x
+    A.new.to_s  #=&gt; "b"
+    "#{A.new}"  #=&gt; "b" 2.4 では "a"
+  end
+end
+</code></pre>
+
+</section>
+<section>
+
+<h2>Unicode バージョン 10.0.0</h2>
+
+<p>Ruby 2.4 は 9.0.0</p>
+
+</section>
+<section>
+
+<h1>組み込みライブラリ</h1>
+
+</section>
+<section>
+
+<h2>Array#append, #prepend 追加</h2>
+
+<pre><code class="language-ruby">a = [1, 2, 3]
+a.append 4
+a #=&gt; [1, 2, 3, 4]
+a.prepend 0
+a #=&gt; [0, 1, 2, 3, 4]
+</code></pre>
+
+</section>
+<section>
+
+<h2>Dir.children, Dir.each_child 追加</h2>
+
+<pre><code class="language-ruby">Dir.entries("/tmp/x")  #=&gt; ["..", "abc", "."]
+Dir.children("/tmp/x") #=&gt; ["abc"]
+</code></pre>
+
+<pre><code class="language-ruby">Dir.foreach("/tmp/x"){...}    # 「.」「..」を含む
+Dir.each_child("/tmp/x"){...} # 「.」「..」を含まない
+</code></pre>
+
+</section>
+<section>
+
+<h2>Dir.glob :base オプション追加</h2>
+
+<p>カレントディレクトリの代わりのパスを指定</p>
+
+<pre><code class="language-ruby">Dir.glob("/tmp/x/*")           #=&gt; ["/tmp/x/abc"]
+
+Dir.glob("*", base: "/tmp/x")  #=&gt; ["abc"]
+</code></pre>
+
+</section>
+<section>
+
+<h2>Hash#transform_keys, transform_keys! 追加</h2>
+
+<pre><code class="language-ruby">{a: 1, b: 2, c: 3}.transform_keys(&amp;:upcase)
+#=&gt; {A: 1, B: 2, C: 3}
+
+{a: 1, b: 2, c: 3}.transform_values{|v| v*2}
+#=&gt; {a: 2, b: 4, c: 6}  ←これは 2.4 から
+</code></pre>
+
+</section>
+<section>
+
+<h2>IO.pread, IO.pwrite 追加</h2>
+
+<p>seek &amp; read (write) をアトミックに行う</p>
+
+<pre><code class="language-ruby">File.open("/tmp/x/abc") do |f|
+  f.read          #=&gt; "abcdefghijklmnopqrstuvwxyz"
+  f.pread(10, 3)  #=&gt; "defghijklm"
+end
+</code></pre>
+
+</section>
+<section>
+
+<h2>Integer.sqrt 追加</h2>
+
+<p>整数の平方根</p>
+
+<pre><code class="language-ruby">Integer.sqrt(9)  #=&gt; 3
+Integer.sqrt(15) #=&gt; 3
+Integer.sqrt(16) #=&gt; 4
+</code></pre>
+
+</section>
+<section>
+
+<h2>Integer#round, floor, ceil, truncate が整数を返す</h2>
+
+<pre><code class="language-ruby"># Ruby 2.4
+123.round(1)  #=&gt; 123.0
+123.round(-1) #=&gt; 120
+
+# Ruby 2.5
+123.round(1)  #=&gt; 123
+123.round(-1) #=&gt; 120
+</code></pre>
+
+</section>
+<section>
+
+<h2>Numeric: coerce内の例外</h2>
+
+<pre><code class="language-ruby">class A
+  def coerce(other)
+    raise 'hoge'
+  end
+end
+
+# Ruby 2.4
+1 &lt; A.new
+#=&gt; in `&lt;': comparison of Integer with A failed (ArgumentError)
+
+# Ruby 2.5
+1 &lt; A.new
+#=&gt; in `coerce': hoge (RuntimeError)
+</code></pre>
+
+</section>
+<section>
+
+<h2>Range: &lt;=&gt;内の例外</h2>
+
+<pre><code class="language-ruby">class A
+  def &lt;=&gt;(x)
+    raise 'hoge'
+  end
+end
+
+# Ruby 2.4
+Range.new(A.new, A.new)
+#=&gt; in `initialize': bad value for range (ArgumentError)
+
+# Ruby 2.5
+Range.new(A.new, A.new)
+#=&gt; in `&lt;=&gt;': hoge (RuntimeError)
+</code></pre>
+
+</section>
+<section>
+
+<h2>Object#yield_self 追加</h2>
+
+<pre><code class="language-ruby"># tap は前からある (1.8 ?)
+123.tap{|x| x*2}        #=&gt; 123
+
+# 2.5 から
+123.yield_self{|x| x*2} #=&gt; 246
+</code></pre>
+
+</section>
+<section>
+
+<h2>Process.times の精度向上</h2>
+
+<pre><code># Ruby 2.4
+% ruby -e 'p Process.times'
+#&lt;struct Process::Tms utime=0.06, stime=0.01, cutime=0.0, cstime=0.0&gt;
+
+# Ruby 2.5
+ruby -e 'p Process.times'
+#&lt;struct Process::Tms utime=0.071065, stime=0.015792, cutime=0.0, cstime=0.0&gt;
+</code></pre>
+
+</section>
+<section>
+
+<h2>String#delete_prefix, delete_suffix, delete_prefix!, delete_suffix! 追加</h2>
+
+<pre><code class="language-ruby">"abcdefg".delete_prefix("abc") #=&gt; "defg"
+"abcdefg".delete_suffix("efg") #=&gt; "abcd"
+</code></pre>
+
+</section>
+<section>
+
+<h2>String#casecmp, casecmp? が例外を発生しない</h2>
+
+<pre><code class="language-ruby"># Ruby 2.4
+"hoge".casecmp(123)  #=&gt; TypeError
+
+# Ruby 2.5
+"hoge".casecmp(123)  #=&gt; nil
+</code></pre>
+
+</section>
+<section>
+
+<h2>String#grapheme_clusters, each_grapheme_cluster 追加</h2>
+
+<p>Unicodeの合成文字単位で処理</p>
+
+<pre><code class="language-ruby">gaga = "がが"           # 1文字目は「か」と「゙」の合成文字
+gaga.chars              #=&gt; ["か", "゙", "が"]
+gaga.grapheme_clusters  #=&gt; ["が", "が"]
+</code></pre>
+
+</section>
+<section>
+
+<h2>Thread#fetch 追加</h2>
+
+<p>スレッド固有パラメータの取り出しをHash風に</p>
+
+<pre><code class="language-ruby">Thread.current[:hoge]            #=&gt; nil
+Thread.current.fetch(:hoge)      #=&gt; KeyError "key not found: hoge"
+Thread.current.fetch(:hoge, 123) #=&gt; 123
+</code></pre>
+
+</section>
+<section>
+
+<h2>Thread.name=</h2>
+
+<p>Ruby 2.3からあった。Windows 10 でもスレッドに名前をつけられるようになったらしい。</p>
+
+<pre><code class="language-ruby">Thread.new do
+  Thread.current.name = "hogehoge"
+end
+</code></pre>
+
+<pre><code>% ps -L -o pid,lwp,comm  -p 14655
+  PID   LWP COMMAND
+14655 14655 ruby
+14655 14656 ruby-timer-thr
+14655 14657 hogehoge
+</code></pre>
+
+</section>
+<section>
+
+<h2>Time.at で秒以下の単位を指定</h2>
+
+<pre><code class="language-ruby">Time.at(1511056368, 123456).nsec            #=&gt; 123456000
+Time.at(1511056368, 123456.789).nsec        #=&gt; 123456789
+Time.at(1511056368, 123456789, :nsec).nsec  #=&gt; 123456789
+</code></pre>
+
+</section>
+<section>
+
+<h2>KeyError#receiver, key 追加</h2>
+
+<p>例外が発生したオブジェクトとキーを返す</p>
+
+<pre><code class="language-ruby">begin
+  hash = {a: 123}
+  hash.fetch(:b)
+rescue KeyError =&gt; e
+  e.receiver #=&gt; {a: 123}
+  e.key      #=&gt; :b
+end
+</code></pre>
+
+</section>
+<section>
+
+<h3>BasicSocket#read_nonblock, #write_nonblock が O_NONBLOCK をセットしない</h3>
+
+<pre><code class="language-ruby">require 'io/nonblock'
+s = TCPSocket.new("127.0.0.1", 80)
+s.nonblock?        #=&gt; false
+s.read_nonblock(10)
+
+# Ruby 2.4
+s.nonblock?        #=&gt; true
+
+# Ruby 2.5
+s.nonblock?        #=&gt; false
+</code></pre>
+
+</section>
+<section>
+
+<h2>Random.raw_seed が Random.urandom に名前変更</h2>
+
+</section>
+<section>
+
+<h2>Socket::Ifaddr#vhid 追加</h2>
+
+<p>BSD?</p>
+
+</section>
+<section>
+
+<h1>標準添付ライブラリ</h1>
+
+</section>
+<section>
+
+<h2>Bundler Gem 標準添付</h2>
+
+</section>
+<section>
+
+<h2>ERB#result_with_hash 追加</h2>
+
+<pre><code class="language-ruby">require "erb"
+name = "tmtms"
+ERB.new("Hello &lt;%=name%&gt;").result #=&gt; "Hello tmtms"
+</code></pre>
+
+<pre><code class="language-ruby">require "erb"
+ERB.new("Hello &lt;%=name%&gt;").result_with_hash(name: "tmtms")
+</code></pre>
+
+</section>
+<section>
+
+<h2>ERB: trim 指定時 CR LF を trim</h2>
+
+<pre><code class="language-ruby"># Ruby 2.4
+require 'erb'
+ERB.new("&lt;%=123%&gt;\r\n", nil, 1).result #=&gt; "123\r\n"
+
+# Ruby 2.5
+require 'erb'
+ERB.new("&lt;%=123%&gt;\r\n", nil, 1).result #=&gt; "123"
+</code></pre>
+
+</section>
+<section>
+
+<h2>Net::HTTP ステータス追加</h2>
+
+<pre><code class="language-ruby">    '102' =&gt; Net::HTTPProcessing,
+    '208' =&gt; Net::HTTPAlreadyReported,
+    '421' =&gt; Net::HTTPMisdirectedRequest,
+    '451' =&gt; Net::HTTPUnavailableForLegalReasons,
+    '506' =&gt; Net::HTTPVariantAlsoNegotiates,
+    '508' =&gt; Net::HTTPLoopDetected,
+    '510' =&gt; Net::HTTPNotExtended,
+</code></pre>
+
+</section>
+<section>
+
+<h3>Net::HTTP::STATUS_CODES 追加</h3>
+
+<pre><code class="language-ruby">require 'net/http/status'
+Net::HTTP::STATUS_CODES
+#=&gt; {100=&gt;"Continue", 101=&gt;"Switching Protocols",
+#    102=&gt;"Processing", 200=&gt;"OK", 201=&gt;"Created",
+#    202=&gt;"Accepted", 203=&gt;"Non-Authoritative Information",
+#    204=&gt;"No Content", 205=&gt;"Reset Content", 206=&gt;"Partial Content",
+#    ...}
+</code></pre>
+
+</section>
+<section>
+
+<h3>Net::HTTP.new に no_proxy 引数追加</h3>
+
+<p>7番目の引数</p>
+
+<pre><code class="language-ruby">no_proxy = "example.com,example.net:8080"
+HTTP.new(address, port, proxy_addr, proxy_port,
+         proxy_user, proxy_pass, no_proxy)
+</code></pre>
+
+</section>
+<section>
+
+<h2>Net::HTTP: http_proxy環境変数を使用</h2>
+
+</section>
+<section>
+
+<h2>Net::HTTP: http_proxy環境変数の認証情報を使用</h2>
+
+<p><code>http://<span style="color:red">user:password</span>@proxy:port/</code></p>
+
+<p>Windowsを除く</p>
+
+</section>
+<section>
+
+<h2>RbConfig::SIZE_OF, RbConfig::LIMITS 追加</h2>
+
+<pre><code class="language-ruby">require "rbconfig/sizeof"
+RbConfig::SIZEOF
+#=&gt; {"int"=&gt;4, "short"=&gt;2, "long"=&gt;8, "long long"=&gt;8,
+#    "__int128"=&gt;16, "off_t"=&gt;8, "void*"=&gt;8, "float"=&gt;4,
+#    "double"=&gt;8, "time_t"=&gt;8, "clock_t"=&gt;8, "size_t"=&gt;8,
+#    ...
+RbConfig::LIMITS
+#=&gt; {"FIXNUM_MAX"=&gt;4611686018427387903,
+#    "FIXNUM_MIN"=&gt;-4611686018427387904, "CHAR_MAX"=&gt;127,
+#    "CHAR_MIN"=&gt;-128, "SCHAR_MAX"=&gt;127, "SCHAR_MIN"=&gt;-128,
+#    "UCHAR_MAX"=&gt;255, "WCHAR_MAX"=&gt;2147483647,
+#    ...
+</code></pre>
+
+</section>
+<section>
+
+<h2>Ripper#state, Ripper::EXPR_BEG 追加</h2>
+
+</section>
+<section>
+
+<h2>Set#to_s, #=== 追加</h2>
+
+<pre><code class="language-ruby">s = Set.new([1, 2, 3])
+# Ruby 2.4
+s.to_s   #=&gt; "#&lt;Set:0x00560b825243b8&gt;"
+s === 2  #=&gt; false
+s === s  #=&gt; true
+
+# Ruby 2.5
+s.to_s   #=&gt; "#&lt;Set: {1, 2, 3}&gt;"
+s === 2  #=&gt; true    Set#include? と同じ
+s === s  #=&gt; false
+</code></pre>
+
+</section>
+<section>
+
+<h2>WEBrick: Serve Name Indication (SNI) サポート</h2>
+
+</section>
+<section>
+
+<h3>標準ライブラリから mathn 削除</h3>
+
+<p>もうあまり使われてない?</p>
+
+</section>
+<section>
+
+<h3>標準ライブラリから ubygems 削除</h3>
+
+<p>rubygems を <code>-rubygems</code> コマンドラインオプションで使用できるようにするためのもの。</p>
+
+<p>rubygems は標準で使用されるためもう不要。</p>
+
+</section>
+<section>
+
+<h1>その他</h1>
+
+</section>
+<section>
+
+<h2>バックトレースの順番</h2>
+
+<p>標準エラー出力が端末の場合に表示が逆順 (EXPERIMENTAL)</p>
+
+<pre><code># Ruby 2.4
+% ruby /tmp/a.rb
+/tmp/a.rb:8:in `c': unhandled exception
+	from /tmp/a.rb:5:in `b'
+	from /tmp/a.rb:2:in `a'
+	from /tmp/a.rb:10:in `&lt;main&gt;'
+</code></pre>
+
+<pre><code># Ruby 2.5
+% ruby /tmp/a.rb
+Traceback (most recent call last):
+	3: from /tmp/a.rb:10:in `&lt;main&gt;'
+	2: from /tmp/a.rb:2:in `a'
+	1: from /tmp/a.rb:5:in `b'
+/tmp/a.rb:8:in `c': unhandled exception
+</code></pre>
+
+</section>
+<section>
+
+<h2>バックトレースの順番</h2>
+
+<p>標準エラー出力が端末でなければ従来通り</p>
+
+<pre><code>% ruby /tmp/a.rb
+Traceback (most recent call last):
+	3: from /tmp/a.rb:10:in `&lt;main&gt;'
+	2: from /tmp/a.rb:2:in `a'
+	1: from /tmp/a.rb:5:in `b'
+/tmp/a.rb:8:in `c': unhandled exception
+</code></pre>
+
+<pre><code>% ruby /tmp/a.rb 2&gt;&amp;1 | cat
+/tmp/a.rb:8:in `c': unhandled exception
+	from /tmp/a.rb:5:in `b'
+	from /tmp/a.rb:2:in `a'
+	from /tmp/a.rb:10:in `&lt;main&gt;'
+</code></pre>
+
+</section>
+<section>
+
+<h3>configure で拡張ライブラリを強制</h3>
+
+<ul>
+  <li>通常は環境に応じて自動判別</li>
+  <li>
+<code>--with-ext</code> オプションで強制できる</li>
+  <li>コンパイルできる環境でない場合は make でエラー</li>
+</ul>
+
+<pre><code>% ./configure --with-ext=openssl,+
+% make
+...
+*** Following extensions are not compiled:
+openssl:
+	Could not be configured. It will not be installed.
+	/misc/tmp/ruby-2.5.0-preview1/ext/openssl/extconf.rb:94: OpenSSL library could not be found. You might want to use --with-openssl-dir=&lt;dir&gt; option to specify the prefix where OpenSSL is installed.
+	Check ext/openssl/mkmf.log for more details.
+*** Fix the problems, then remove these directories and try again if you want.
+exts.mk:1853: ターゲット 'note' のレシピで失敗しました
+make[1]: *** [note] エラー 1
+make[1]: ディレクトリ '/misc/tmp/ruby-2.5.0-preview1' から出ます
+uncommon.mk:236: ターゲット 'build-ext' のレシピで失敗しました
+make: *** [build-ext] エラー 2
+</code></pre>
+
+</section>
+<section>
+
+<h1>以上</h1>
+
+</section>

@@ -1,0 +1,189 @@
+<section>
+
+<h2>本当はこわいMySQLプロトコル</h2>
+
+<p>Club MySQL #2</p>
+
+<p>2017/11/28</p>
+
+<p>とみたまさひろ</p>
+
+</section>
+<section>
+
+<p>MySQLのXじゃない方のプロトコル</p>
+
+</section>
+<section>
+
+<h3>接続</h3>
+
+<pre><code class="language-mermaid">sequenceDiagram
+    Client --&gt;&gt; Server: Connection
+    Server -&gt;&gt; Client: Initial
+    Client -&gt;&gt; Server: Authentication
+    Server -&gt;&gt; Client: OK
+</code></pre>
+
+</section>
+<section>
+
+<h3>クエリ(参照系)</h3>
+
+<pre><code class="language-mermaid">sequenceDiagram
+    Client -&gt;&gt; Server: Query
+    Server -&gt;&gt; Client: Field Count
+    loop field count
+        Server -&gt;&gt; Client: Field Info
+    end
+    loop record count
+        Server -&gt;&gt; Client: Record Data
+    end
+    Server -&gt;&gt; Client: EOF
+</code></pre>
+
+</section>
+<section>
+
+<h3>クエリ(更新系)</h3>
+
+<pre><code class="language-mermaid">sequenceDiagram
+    Client -&gt;&gt; Server: Query
+    Server -&gt;&gt; Client: Status
+</code></pre>
+
+</section>
+<section>
+
+<p>クエリをパースするのはサーバー</p>
+
+</section>
+<section>
+
+<p>クライアントはクエリが参照か更新かは知らない</p>
+
+</section>
+<section>
+
+<p>サーバーから教えてもらう</p>
+
+</section>
+<section>
+
+<h3>特殊なクエリ</h3>
+
+</section>
+<section>
+
+<p>LOAD DATA LOCAL INFILE</p>
+
+<pre><code class="language-sql">LOAD DATA LOCAL INFILE 'filename' INTO TABLE tblname;
+</code></pre>
+
+<p>クライアントのファイルをテーブルにロード</p>
+
+</section>
+<section>
+
+<p>クエリをパースするのはサーバー<br>
+(2回目)</p>
+
+</section>
+<section>
+
+<p>サーバーからファイル名を教えてもらう</p>
+
+</section>
+<section>
+
+<p>LOAD DATA LOCAL INFILE</p>
+
+<pre><code class="language-mermaid">sequenceDiagram
+    Client -&gt;&gt; Server: Query
+    Server -&gt;&gt; Client: Filename
+    Client -&gt;&gt; Server: Contents
+    Client -&gt;&gt; Server: EOF
+    Server -&gt;&gt; Client: Status
+</code></pre>
+
+</section>
+<section>
+
+<p>クライアントの指定とは異なるファイル名が<br>
+サーバーから返されてもそれを送る</p>
+
+</section>
+<section>
+
+<p>デモ: Proxy でファイル名を差し替える</p>
+
+<pre><code class="language-mermaid">sequenceDiagram
+    Client -&gt;&gt; Proxy: Query
+    Proxy -&gt;&gt; Server: Query
+    Server -&gt;&gt; Proxy: Filename(hoge)
+    Proxy -&gt;&gt; Client: Filename(fuga)
+    Client -&gt;&gt; Proxy: Contents
+    Proxy -&gt;&gt; Server: Contents
+    Client -&gt;&gt; Proxy: EOF
+    Proxy -&gt;&gt; Server: EOF
+    Server -&gt;&gt; Proxy: Status
+    Proxy -&gt;&gt; Client: Status
+</code></pre>
+
+</section>
+<section>
+
+<h2>こわい!</h2>
+
+</section>
+<section>
+
+<p>クエリをパースするのはサーバー<br>
+(3回目)</p>
+
+</section>
+<section>
+
+<p>デモ: Proxy でLOAD DATA の振りをする</p>
+
+<pre><code class="language-mermaid">sequenceDiagram
+    Client -&gt;&gt; Proxy: Query
+    Proxy -&gt;&gt; Server: Query
+    Server -&gt;&gt; Proxy: Status
+    Proxy -&gt;&gt; Client: Filename
+    Client -&gt;&gt; Proxy: Contents
+    Client -&gt;&gt; Proxy: EOF
+    Proxy -&gt;&gt; Client: Status
+</code></pre>
+
+</section>
+<section>
+
+<h2>こわい!</h2>
+
+</section>
+<section>
+
+<h3>対策</h3>
+
+<ul>
+  <li>
+    <p>信頼できないサーバーに繋がない</p>
+  </li>
+  <li>
+    <p>SSL接続</p>
+  </li>
+  <li>
+    <p>クライアント側で LOCAL INFILE を無効化</p>
+
+    <pre><code class="language-text">% mysql --local-infile=false
+</code></pre>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h2>おわり</h2>
+
+</section>

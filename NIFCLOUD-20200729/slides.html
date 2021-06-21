@@ -1,0 +1,229 @@
+<section>
+
+<h2>MySQL徹底入門 第4版</h2>
+
+<h2>ユーザー管理とか文字コードとか</h2>
+
+<p>とみたまさひろ</p>
+
+<p>2020-07-29</p>
+
+<p>ニフクラエンジニアミートアップ<br>
+#nifcloud_emup</p>
+
+</section>
+<section>
+
+<h2>自己紹介</h2>
+
+<p><img src="images/icon2.jpg" alt="" style="position:absolute;top:0%;right:0;width:180px;border:0px"></p>
+
+<ul>
+  <li>とみたまさひろ <a href="https://twitter.com/tmtms">@tmtms</a>
+</li>
+  <li><a href="https://tmtms.hatenablog.com">https://tmtms.hatenablog.com</a></li>
+  <li>日本MySQLユーザ会 (文字化け担当)</li>
+  <li>MySQL Parameters
+    <ul>
+      <li><a href="https://mysql-params.tmtms.net/mysqld/?vers=8.0.21" style="font-size:70%">https://mysql-params.tmtms.net/mysqld/?vers=8.0.21</a></li>
+    </ul>
+  </li>
+  <li>好きなMySQLの命令は<code>SHOW CREATE TABLE</code>
+</li>
+  <li>富士通クラウドテクノロジーズ
+    <ul>
+      <li>ニフクラ</li>
+      <li>いま見てる人は全員知ってるはず</li>
+      <li>認知度100%</li>
+    </ul>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h3>執筆分</h3>
+
+<ul>
+  <li>5 「ユーザー管理」</li>
+  <li>10.5 「データベースプログラミング Ruby」</li>
+  <li>11 「文字コードと日本語環境」</li>
+  <li>14 「逆引きMySQL辞典」のうちの2項目</li>
+</ul>
+
+<p>全体の1割弱</p>
+
+<p>その他、GitLab や Mattermost を用意したり</p>
+
+<p>全体をレビューしたり</p>
+
+</section>
+<section>
+
+<h3>見どころ</h3>
+
+</section>
+<section>
+
+<h3>認証プラグイン auth_socket</h3>
+
+<p>ローカルのmysqldにOSと同じユーザー名で<br>
+パスワード無しで接続できる</p>
+
+<p>rootとかで便利</p>
+
+<p>どうせOSのrootは何でも出来るし</p>
+
+</section>
+<section>
+
+<h3>パスワード管理</h3>
+
+<dl>
+  <dt>有効期限</dt>
+  <dd>期限切れだと再設定が必要</dd>
+  <dt>再利用ポリシー</dt>
+  <dd>過去N回分は再利用不可</dd>
+  <dd>過去N日分は再利用不可</dd>
+  <dt>パスワード強度</dt>
+  <dd>ユーザー名と同じ文字列は不可</dd>
+  <dd>N文字未満は不可</dd>
+  <dd>大文字/小文字/数字/記号をそれぞれN文字必要</dd>
+</dl>
+
+</section>
+<section>
+
+<h3>権限 partial_revokes</h3>
+
+<p>一部のDBを除くという指定が可能</p>
+
+<pre><code class="language-sql">GRANT SELECT ON *.* TO hoge;
+
+REVOKE SELECT ON mysql.* FROM hoge;
+</code></pre>
+
+</section>
+<section>
+
+<h3>ロール</h3>
+
+<p>ユーザーに適用する権限の集合に名前をつけたもの</p>
+
+<p>複雑な権限を複数のユーザーに適用するのに便利</p>
+
+</section>
+<section>
+
+<h3>文字列比較</h3>
+
+<pre><code class="language-sql">SELECT 'abc'='ABC'                   =&gt; ⭕
+
+SELECT '〇'='0'                      =&gt; ⭕
+
+SELECT 'うさぎさんちーむ'='ウサギ㌠' =&gt; ⭕
+
+SELECT '平成'='㍻'                   =&gt; ⭕
+
+SELECT '令和'='㋿'                   =&gt; ❌
+</code></pre>
+
+<p>なんでやねん！<br>
+というのを説明</p>
+
+</section>
+<section>
+
+<h3>文字列比較</h3>
+
+<pre><code class="language-sql">SELECT * FROM tbl WHERE utf8mb4_col = _ascii'ABC'   =&gt; ⭕
+
+SELECT * FROM tbl WHERE ascii_col = _utf8mb4'ABC'   =&gt; ⭕
+
+SELECT * FROM tbl WHERE ascii_col = _utf8mb4'ほげ'  =&gt; ❌
+ERROR 1267 (HY000): Illegal mix of collations (ascii_general_ci,
+IMPLICIT) and (utf8mb4_0900_ai_ci,COERCIBLE) for operation '='
+</code></pre>
+
+<p>なんでやねん！<br>
+というのを説明</p>
+
+</section>
+<section>
+
+<h3>ソート順</h3>
+
+<p>JISマニア向け <code>utf8mb4_ja_0900_as_cs</code></p>
+
+<pre><code class="language-sql">mysql&gt; SELECT c,HEX(c) FROM t ORDER BY c;
++------+--------+
+| c    | hex(c) |
++------+--------+
+| 亜   | E4BA9C |
+| 伊   | E4BC8A |
+| 宇   | E5AE87 |
+| 栄   | E6A084 |  ←
+| 奥   | E5A5A5 |  ←
++------+--------+
+</code></pre>
+
+</section>
+<section>
+
+<h3>ソート順</h3>
+
+<p>長音記号もJIS準拠</p>
+
+<pre style="font-size:60%"><code class="language-sql">mysql&gt; SELECT * FROM tt ORDER BY c;
++--------+
+| c      |
++--------+
+| あー   |  ←「あ」よりも前
+| ああ   |
+| あい   |
+| あう   |
+| いあ   |
+| いー   |  ←「あ」と「い」の間
+| いい   |
+| いう   |
+| うあ   |
+| うい   |
+| うー   |  ←「い」と「う」の間
+| うう   |
++--------+
+</code></pre>
+
+</section>
+<section>
+
+<h3>こんな便利な表が!</h3>
+
+<p><img src="images/collations2.png" alt=""></p>
+
+</section>
+<section>
+
+<h3>自分の担当以外のおすすめ</h3>
+
+<ul>
+  <li>6 「MySQLの運用」</li>
+  <li>8 「レプリケーション」</li>
+  <li>9 「バックアップとリストア」</li>
+</ul>
+
+<p>yuku0825さん担当</p>
+
+<hr>
+
+<ul>
+  <li>14 「逆引きMySQL辞典」</li>
+</ul>
+
+<p>商業出版技術書と思えない文体がいい</p>
+
+</section>
+<section>
+
+<h2>おわり</h2>
+
+</section>
