@@ -142,7 +142,7 @@ ISO-2022-JP のような状態を持つ文字コードの場合は ASCII で終�
 → &lt;ESC&gt;$BF|K\8l&lt;ESC&gt;(BABC&lt;ESC&gt;$B$"$$$&amp;&lt;ESC&gt;(B
 </code></pre>
 
-<p><code>&lt;ESC&gt;$B</code> : JIS X 0218</p>
+<p><code>&lt;ESC&gt;$B</code> : JIS X 0208</p>
 
 <p><code>&lt;ESC&gt;(B</code> : US-ASCII　</p>
 
@@ -197,6 +197,8 @@ $$$&amp;&lt;ESC&gt;(B                        いう
 <pre><code>=?UTF-8?B?44GC44GE44GG44GI44GK?==?UTF-8?B?44GL44GN44GP44GR44GT?=
 </code></pre>
 
+<p>本当はデコードしちゃダメ</p>
+
 </section>
 <section>
 
@@ -205,7 +207,8 @@ $$$&amp;&lt;ESC&gt;(B                        いう
 <pre><code class="language-text">"=?UTF-8?B?44GC44GE44GG44GI44GK?="
 </code></pre>
 
-<p>本当はデコードしちゃダメ</p>
+<p>添付ファイル名とかでよく見る<br>
+本当はデコードしちゃダメ</p>
 
 </section>
 <section>
