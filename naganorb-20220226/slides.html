@@ -1,0 +1,547 @@
+<section>
+
+<h2>Linux用キーリマッパーを作る技術</h2>
+
+<p>Nagano.rb #9</p>
+
+<p>2022-02-26</p>
+
+<p>とみたまさひろ</p>
+
+</section>
+<section>
+
+<h3>自己紹介</h3>
+
+<p><img src="images/icon2.jpg" alt="" style="position:absolute;top:0%;right:0;width:180px;border:0px"></p>
+
+<ul>
+  <li>とみたまさひろ</li>
+  <li><a href="https://twitter.com/tmtms">https://twitter.com/tmtms</a></li>
+  <li><a href="https://blog.tmtms.net">https://blog.tmtms.net</a></li>
+  <li><a href="https://zenn.dev/tmtms">https://zenn.dev/tmtms</a></li>
+  <li>MySQL / メール / 文字化け</li>
+</ul>
+
+</section>
+<section>
+
+<h3>Linux用キーリマッパーを作った</h3>
+
+<p>Linux デスクトップ環境を使ってる人向け</p>
+
+</section>
+<section>
+
+<h3>経緯</h3>
+
+<p>11月に転職して人生初 Mac</p>
+
+<p>キーマップに慣れない</p>
+
+<p>でも Mac のキーマップの方が良さそう<br>
+(Ctrl+N や Ctrl+P がブラウザに取られない)</p>
+
+<p>仕事以外で使ってる Linux でも Mac と同じにしよう！</p>
+
+</section>
+<section>
+
+<p>「最強のキーリマッパー xremap」<br>
+<a href="https://k0kubun.hatenablog.com/entry/xremap">https://k0kubun.hatenablog.com/entry/xremap</a></p>
+
+<p>便利！</p>
+
+</section>
+<section>
+
+<p>Ctrl-N を ↓<br>
+Ctrl-P を ↑<br>
+Ctrl-F を →<br>
+Ctrl-B を ←<br>
+Alt-[A-Z] を Ctrl-[A-Z]</p>
+
+<p>みたいな感じにすれば良さそう</p>
+
+</section>
+<section>
+
+<p>Ctrl-K は普通は行末まで削除</p>
+
+<p>でも日本語入力時には Ctrl-K はカタカナ変換にしたい</p>
+
+<p>できなそう…🤔</p>
+
+<p>じゃあ自分で作ってみるか</p>
+
+</section>
+<section>
+
+<h3>Rkremap</h3>
+
+<p><a href="https://github.com/tmtm/rkremap">https://github.com/tmtm/rkremap</a></p>
+
+</section>
+<section>
+
+<p>アプリではなくライブラリ</p>
+
+<p>設定ファイルではなくプログラムを書く必要あり</p>
+
+<p style="font-size:80%">YAML はつらい…<br>
+↓<br>
+Ruby の DSL もいいかも…<br>
+↓<br>
+だったら Ruby プログラム書けばいいんじゃね</p>
+
+</section>
+<section>
+
+<h3>実行時に要root権限</h3>
+
+<p>ユーザーを input グループに追加すればいいんだけど<br>
+セキュリティ的にちょっとこわいかも</p>
+
+<p style="font-size:80%">sudo なしでやるには<br>
+<a href="https://github.com/k0kubun/xremap#usage">https://github.com/k0kubun/xremap#usage</a><br>
+「Option 2: Run xremap without sudo」</p>
+
+</section>
+<section>
+
+<p>例</p>
+
+<pre style="font-size:60%"><code class="language-ruby">require 'rkremap'
+include Rkremap::KeyCode
+rk = Rkremap.new
+rk.grab = true
+rk.x11 = true
+rk.start do |code, mod, app|
+  # Emacs や端末ではそのまま
+  if app.class_name == 'Emacs' || app.class_name =~ /terminal/i
+    rk.key(code, mod)
+    next
+  end
+  # ALT+[A-Z] は Ctrl+[A-Z] に変換
+  if (mod[KEY_LEFTALT] || mod[KEY_RIGHTALT]) &amp;&amp;
+     Rkremap::CODE_KEY[code] =~ /\AKEY_[A-Z]\z/
+    mod[KEY_LEFTALT] = mod[KEY_RIGHTALT] = false
+    mod[KEY_LEFTCTRL] = true
+    rk.key(code, mod)
+    next
+  end
+end
+</code></pre>
+
+</section>
+<section>
+
+<p>Ctrl-K 問題</p>
+
+<p>日本語入力中かどうかは fcitx-remote コマンドで判定</p>
+<pre><code class="language-bash">while :; do
+  if [ $(fcitx-remote) -eq 2 ]; then
+    touch /tmp/fcitx-enabled
+  else
+    rm -f /tmp/fcitx-enabled
+  fi
+  sleep 0.1
+done
+</code></pre>
+
+</section>
+<section>
+
+<p>状態ファイルの有無で分岐</p>
+<pre style="font-size:60%"><code class="language-ruby">  if mod[KEY_LEFTCTRL] || mod[KEY_RIGHTCTRL]
+    # Ctrl+K/I/O は日本語変換時はそのまま
+    if code == KEY_K &amp;&amp; File.exist?('/tmp/fcitx-enabled')
+      rk.key(code, mod)
+      next
+    end
+    # Ctrl+K は行末まで削除
+    if code == KEY_K
+      rk.key(KEY_END, mod_disable_all.merge({KEY_LEFTSHIFT =&gt; true}))
+      rk.key(KEY_X, mod_disable_all.merge({KEY_LEFTCTRL =&gt; true}))
+      next
+    end
+    ...
+</code></pre>
+
+</section>
+<section>
+
+<p>キーロガー的なやつ</p>
+
+<pre style="font-size:60%"><code class="language-ruby">require 'rkremap'
+def code2key(code)
+  Rkremap::CODE_KEY[code].to_s.sub(/\AKEY_/, '')
+end
+rk = Rkremap.new
+rk.grab = false
+rk.x11 = true
+rk.start do |code, mod, app|
+  key = (mod.select{|_, v| v}.keys + [code]).map{|c| code2key(c)}.join('-')
+  key &lt;&lt; " at #{app.title} [#{app.class_name}]" if rk.x11
+  puts key
+end
+</code></pre>
+
+</section>
+<section>
+
+<h3>キーリマッパーの構成要素技術</h3>
+
+</section>
+<section>
+
+<h3>キー入力情報</h3>
+
+</section>
+<section>
+
+<p><code>/dev/input/event*</code> から24バイト読む</p>
+
+<pre><code class="language-c">struct input_event {
+  struct timeval time;  // イベント発生日時
+  // struct timeval { long int tv_usec, long int tv_nsec };
+  unsigned short type;  // イベントタイプ
+  unsigned short code;  // キーコード(キーイベントの場合)
+  unsigned int value;   // 0:release / 1:press / 2:repeat
+};
+</code></pre>
+<p>Rubyで（要root）</p>
+<pre><code class="language-ruby">ev = File.open('/dev/input/event3')
+raw = ev.sysread(24)
+sec, usec, type, code, value = raw.unpack('Q!Q!SSl')
+</code></pre>
+
+</section>
+<section>
+
+<p>ThinkPad のキーボードで <code>A</code> を押して離すと:</p>
+<pre><code class="language-ruby">type       code       value
+EV_MSC(4)  4          30   # よくわからん
+EV_KEY(1)  KEY_A(30)  1    # 'A' 押す
+EV_SYN(0)  0          0    # 区切り
+EV_MSC(4)  4          30   # よくわからん
+EV_KEY(1)  KEY_A(30)  0    # 'A' 離す
+EV_SYN(0)  0          0    # 区切り
+</code></pre>
+
+</section>
+<section>
+
+<p>Ctrl や Alt 等の修飾キーも普通のキーと同じ</p>
+
+<p><code>Ctrl+A</code> (<code>EV_KEY</code> だけ抜粋)</p>
+<pre><code class="language-ruby">EV_KEY(1)  KEY_LEFTCTRL(29)  1  # 'CTRL' 押す
+EV_KEY(1)  KEY_A(30)         1  # 'A' 押す
+EV_KEY(1)  KEY_A(30)         0  # 'A' 離す
+EV_KEY(1)  KEY_LEFTCTRL(29)  0  # 'CTRL' 離す
+</code></pre>
+
+</section>
+<section>
+
+<p>キーイベントは読めるけどアプリにも渡る</p>
+
+<p>GRAB すればアプリに渡さず横取りできる</p>
+
+<pre><code class="language-ruby">ev.ioctl(1074021776, 1)  # EVIOCGRAB
+</code></pre>
+
+<p><strong>キー入力が効かなくなるので注意！</strong></p>
+
+</section>
+<section>
+
+<h3>デバイスファイルの選択</h3>
+
+</section>
+<section>
+
+<p>evtest</p>
+
+<pre style="font-size:50%"><code class="language-txt">% sudo evtest
+No device specified, trying to scan all of /dev/input/event*
+Available devices:
+/dev/input/event0:  Lid Switch
+/dev/input/event1:  Sleep Button
+/dev/input/event2:  Power Button
+/dev/input/event3:  AT Translated Set 2 keyboard
+/dev/input/event4:  Video Bus
+/dev/input/event5:  Synaptics TM3145-003
+/dev/input/event6:  ThinkPad Extra Buttons
+/dev/input/event7:  HDA Intel PCH Dock Mic
+/dev/input/event8:  HDA Intel PCH Mic
+/dev/input/event9:  HDA Intel PCH Dock Headphone
+/dev/input/event10: HDA Intel PCH Headphone
+/dev/input/event11: HDA Intel PCH HDMI/DP,pcm=3
+/dev/input/event12: HDA Intel PCH HDMI/DP,pcm=7
+/dev/input/event13: HDA Intel PCH HDMI/DP,pcm=8
+/dev/input/event14: HDA Intel PCH HDMI/DP,pcm=9
+/dev/input/event15: HDA Intel PCH HDMI/DP,pcm=10
+/dev/input/event16: TPPS/2 IBM TrackPoint
+/dev/input/event17: Integrated Camera: Integrated C
+</code></pre>
+
+</section>
+<section>
+
+<p>キーボードデバイスかどうか</p>
+<pre><code class="language-ruby">EV_KEY = 0x01  # /usr/include/linux/input-event-codes.h より
+buf = ''
+ev.ioctl(2147566880, buf)  # EVIOCGBIT(0, 1)
+buf[0].ord &amp; EV_KEY  #=&gt; 1 ならキーボードデバイス
+</code></pre>
+
+<p>キー <code>A</code>, <code>Z</code> に対応しているか</p>
+<pre><code class="language-ruby">KEY_A = 30
+KEY_Z = 44
+ev.ioctl(2153792801, buf)  # EVIOCGBIT(EV_KEY, (KEY_MAX-1)/8+1)
+buf.unpack('C*')[KEY_A/8][KEY_A%8] != 0  #=&gt; 'A' に対応
+buf.unpack('C*')[KEY_Z/8][KEY_Z%8] != 0  #=&gt; 'Z' に対応
+</code></pre>
+
+</section>
+<section>
+
+<h3>仮想キーボードデバイスの作成</h3>
+
+</section>
+<section>
+
+<p><code>/dev/uinput</code> で仮想入力デバイスを作れる（要root）</p>
+
+<pre><code class="language-ruby">udev = File.open('/dev/uinput', 'w')
+udev.ioctl(1074025828, EV_KEY)  # UI_SET_EVBIT   キーデバイス
+udev.ioctl(1074025829, KEY_A)   # UI_SET_KEYBIT  KEY_A を入力可能
+udev.ioctl(1074025829, KEY_Z)   # UI_SET_KEYBIT  KEY_Z を入力可能
+setup = [0x03, 0x1234, 0x5678, 1, 'name', 0].pack('SSSSZ80L')
+  # デバイス情報はてきとー
+udev.ioctl(1079792899, setup)   # UI_DEV_SETUP   セットアップ
+udev.ioctl(21761)               # UI_DEV_CREATE  作成
+</code></pre>
+
+</section>
+<section>
+
+<p>作られたデバイスを evtest で見てみる</p>
+
+<pre style="font-size:65%"><code class="language-txt">% sudo evtest /dev/input/event19
+Input driver version is 1.0.1
+Input device ID: bus 0x3 vendor 0x1234 product 0x5678 version 0x1
+Input device name: "name"
+Supported events:
+  Event type 0 (EV_SYN)
+  Event type 1 (EV_KEY)
+    Event code 30 (KEY_A)
+    Event code 44 (KEY_Z)
+</code></pre>
+
+<p><code>A</code> と <code>Z</code> しか入力できないデバイス</p>
+
+</section>
+<section>
+
+<p>キー入力イベントの作成</p>
+
+<p><code>A</code> を押して離す</p>
+
+<pre style="font-size:65%"><code class="language-ruby"># 時刻は不要
+udev.syswrite(['', EV_KEY, KEY_A, 1].pack('a16SSl'))  # push A
+udev.syswrite(['', EV_SYN, 0, 0].pack('a16SSl'))      # 区切り
+
+udev.syswrite(['', EV_KEY, KEY_A, 0].pack('a16SSl'))  # release A
+udev.syswrite(['', EV_SYN, 0, 0].pack('a16SSl'))      # 区切り
+</code></pre>
+
+</section>
+<section>
+
+<p>毎秒 A-Z をランダムに書き込む迷惑なやつ</p>
+
+<pre><code class="language-ruby">keys = ('A'..'Z').map{eval "KEY_#{_1}"}
+while true
+  key = keys.sample
+  udev.syswrite(['', EV_KEY, key, 1].pack('a16SSl'))
+  udev.syswrite(['', EV_SYN, 0, 0].pack('a16SSl'))
+  udev.syswrite(['', EV_KEY, key, 0].pack('a16SSl'))
+  udev.syswrite(['', EV_SYN, 0, 0].pack('a16SSl'))
+  sleep 1
+end
+</code></pre>
+
+</section>
+<section>
+
+<p>ioctl とか read / write じゃなくて libevdev (evdev gem) もあるんでそれを使うのも良さそう</p>
+
+</section>
+<section>
+
+<h3>キー変換処理まとめ</h3>
+
+<ul>
+  <li>
+<code>/dev/input/event*</code> を GRAB してキーイベントを読む</li>
+  <li>イベントを加工</li>
+  <li>
+<code>/dev/uinput</code> で作成したデバイスに書き込む</li>
+</ul>
+
+</section>
+<section>
+
+<h3>X のウィンドウのタイトルを得る</h3>
+
+</section>
+<section>
+
+<p>特定のアプリだけで有効にしたいとか無効にしたいとか</p>
+
+</section>
+<section>
+
+<p>X11 で入力フォーカスがあたってるアプリ名の取得</p>
+
+<p>C の場合（ざっくりと）:</p>
+
+<ol>
+  <li>
+<code>XGetInputFocus()</code> でフォーカス Window 取得</li>
+  <li>
+<code>XGetClassHint()</code> で Window のクラス名を取得</li>
+  <li>クラス名が得られたら <code>XGetWMName()</code> でウィンドウタイトルを得る</li>
+  <li>クラス名が <code>NULL</code> なら <code>XQueryTree()</code> で親 Window を得て 2 に戻る</li>
+</ol>
+
+</section>
+<section>
+
+<p>Ruby には良さそうな X11 ライブラリがなさそう</p>
+
+<p>X11 の全機能を網羅するのは大変そうだし</p>
+
+<pre><code class="language-sh">% ls /usr/share/man/man3 | grep -c '^X.*\.3\.gz$'
+1231
+</code></pre>
+
+</section>
+<section>
+
+<p>C 拡張を書くのもアレなので</p>
+
+<p>Fiddle で libX11 から必要な機能をつまみ食い</p>
+
+</section>
+<section>
+
+<h3>Fiddle</h3>
+
+<p>Ruby から C のライブラリ関数を呼び出せる</p>
+
+<p>コンパイル不要</p>
+
+<pre><code class="language-ruby">require 'fiddle/import'
+module C
+  extend Fiddle::Importer
+  dlload 'libc.so.6'
+  extern 'int atoi(const char *nptr)'
+end
+p C.atoi("123")  #=&gt; 123
+</code></pre>
+
+</section>
+<section>
+
+<p>構造体やポインタも扱える</p>
+
+<pre style="font-size:65%"><code class="language-ruby">require 'fiddle/import'
+module C
+  extend Fiddle::Importer
+  dlload 'libc.so.6'
+  typealias 'time_t', 'long int'
+  typealias 'suseconds_t', 'long int'
+  Timeval = struct(['time_t tv_sec', 'suseconds_t tv_usec'])
+  extern 'int gettimeofday(struct timeval *tv, struct timezone *tz)'
+end
+timeval = C::Timeval.malloc(Fiddle::RUBY_FREE)  # GC時に解放される
+C.gettimeofday(timeval, nil)
+p timeval.tv_sec   #=&gt; 1970-01-01 00:00:00 UTC からの経過秒数
+p timeval.tv_usec  #=&gt; マイクロ秒
+</code></pre>
+
+</section>
+<section>
+
+<p>必要な関数のみ使えるようにして</p>
+<pre style="font-size:50%"><code class="language-ruby">module X11
+  extend Fiddle::Importer
+  dlload 'libX11.so.6'
+  typealias 'XID', 'unsigned long'
+  typealias 'Window', 'XID'
+  typealias 'Status', 'int'
+  typealias 'Atom', 'unsigned long'
+  Window = struct ['Window window']
+  Pointer = struct ['void *ptr']
+  XClassHint = struct ['char *name', 'char *class_name']
+  XTextProperty = struct ['unsigned char *value', 'Atom encoding', 'int format',
+                          'unsigned long nitems']
+  extern 'Display* XOpenDisplay(char*)'
+  extern 'int XGetInputFocus(Display*, Window*, int*)'
+  extern 'int XGetClassHint(Display*, Window, XClassHint*)'
+  extern 'Status XQueryTree(Display*, Window, Window*, Window*, Window**, unsigned int*)'
+  extern 'Status XGetWMName(Display*, Window, XTextProperty*)'
+  extern 'int Xutf8TextPropertyToTextList(Display*, XTextProperty*, char***, int*)'
+  extern 'int XFree(void*)'
+  extern 'void XFreeStringList(char**)'
+end
+</code></pre>
+
+</section>
+<section>
+
+<p>ざっくりこんな感じ</p>
+
+<p style="font-size:60%">(ホントはX11が確保したメモリの解放処理も必要)</p>
+
+<pre style="font-size:50%"><code class="language-ruby">class_hint = X11::XClassHint.malloc(Fiddle::RUBY_FREE)
+parent = X11::Window.malloc(Fiddle::RUBY_FREE)
+children = X11::Pointer.malloc(Fiddle::RUBY_FREE)
+_ = ' '*8
+display = X11.XOpenDisplay(nil)
+w = X11::Window.malloc(Fiddle::RUBY_FREE)
+X11.XGetInputFocus(display, w, _)
+win = w.window
+while win &gt; 0
+  class_hint.name = class_hint.class_name = nil
+  X11.XGetClassHint(display, win, class_hint)
+  break unless class_hint.name.null? &amp;&amp; class_hint.class_name.null?
+  X11.XQueryTree(display, win, _, parent, children, _)
+  win = parent.window
+end
+prop = X11::XTextProperty.malloc(Fiddle::RUBY_FREE)
+text_list = X11::Pointer.malloc(Fiddle::RUBY_FREE)
+X11.XGetWMName(display, win, prop)
+X11.Xutf8TextPropertyToTextList(display, prop, text_list, _)
+p [class_hint.class_name.to_s, text_list.ptr.ptr.to_s.force_encoding('utf-8')]
+</code></pre>
+
+</section>
+<section>
+
+<h3>まとめ</h3>
+
+<ul>
+  <li>
+<code>/dev/input/event*</code> で入力イベントを読める</li>
+  <li>
+<code>/dev/input/event*</code> を GRAB すると入力がアプリに渡らなくなる</li>
+  <li>
+<code>/dev/uinput</code> で仮想入力デバイスを作れる</li>
+  <li>大きなライブラリの関数をつまみ食いするには Fiddle が便利</li>
+</ul>
+
+</section>
